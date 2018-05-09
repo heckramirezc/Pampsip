@@ -18,7 +18,7 @@ namespace Pampsip
                     Children = {
                         new Label {
                             HorizontalTextAlignment = TextAlignment.Center,
-                            Text = "Welcome to Xamarin Forms!"
+                            Text = "Hola mundo!"
                         }
                     }
                 }
