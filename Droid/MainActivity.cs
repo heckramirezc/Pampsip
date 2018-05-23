@@ -17,8 +17,12 @@ namespace Pampsip.Droid
         {
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
-
+		    //AnimationViewRenderer.Init();
             base.OnCreate(bundle);
+			App.DisplayScreenWidth = (double)Resources.DisplayMetrics.WidthPixels / (double)Resources.DisplayMetrics.Density;
+            App.DisplayScreenHeight = (double)Resources.DisplayMetrics.HeightPixels / (double)Resources.DisplayMetrics.Density;
+            System.Diagnostics.Debug.WriteLine("Ancho: " + App.DisplayScreenWidth);
+            System.Diagnostics.Debug.WriteLine("Alto: " + App.DisplayScreenHeight);
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
 

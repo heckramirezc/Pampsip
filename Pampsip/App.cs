@@ -1,30 +1,46 @@
 ﻿using System;
-
+using Pampsip.Data;
+using Pampsip.Helpers;
+using Pampsip.Views;
+using Pampsip.Views.Acceso;
 using Xamarin.Forms;
 
 namespace Pampsip
 {
     public class App : Application
     {
+		DateTime lastUpdateDefault = new DateTime(2018, 1, 1, 0, 0, 0, DateTimeKind.Local);
+        public static PampsipDatabase database;
+        public static ManejadorDatos ManejadorDatos { get; set; }
+
+
+        public static double DisplayScreenWidth = 0f;
+        public static double DisplayScreenHeight = 0f;
+        public static double DisplayScaleFactor = 0f;
+
+        public static PampsipDatabase Database
+        {
+            get
+            {
+                if (database == null)
+                {
+                    database = new PampsipDatabase();
+                }
+                return database;
+            }
+        }
+
         public App()
         {
-            // The root page of your application
-            var content = new ContentPage
-            {
-                Title = "Pampsip",
-                Content = new StackLayout
-                {
-                    VerticalOptions = LayoutOptions.Center,
-                    Children = {
-                        new Label {
-                            HorizontalTextAlignment = TextAlignment.Center,
-                            Text = "Welcome to Xamarin Forms!"
-                        }
-                    }
-                }
-            };
+			MessagingCenter.Subscribe<Login>(this, "Login", (sender) =>
+			{
+				MainPage = new NavigationPage(new Inicio());
+			});
 
-            MainPage = new NavigationPage(content);
+			if (string.IsNullOrEmpty(Settings.session_SubscriptionKey))
+				Settings.session_SubscriptionKey = Constantes.SubscriptionKey;
+			ManejadorDatos = new ManejadorDatos(new ServicioWeb());
+			MainPage = new Login();
         }
 
         protected override void OnStart()
