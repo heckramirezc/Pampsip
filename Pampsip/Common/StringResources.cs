@@ -13,15 +13,14 @@ namespace Pampsip.Common
         public static readonly string SincronizadorMensaje2 = "Estamos actualizando los datos. Esto tardara un momento.";
 
         public static readonly string MenuTitle = "La Torre";
-        public static readonly string MenuHeader = "Bienvenido";
-        public static readonly string Menu0 = "Inicio";
-        public static readonly string Menu1 = "La Naranja";
-        public static readonly string Menu2 = "Mis Listas";
-        public static readonly string Menu3 = "Nuestro Blog";
-        public static readonly string Menu4 = "Suplemento";
-        public static readonly string Menu5 = "Ubicaciones";
-        public static readonly string Menu6 = "Perfil";
-        public static readonly string Menu7 = "Contáctanos";
+        public static readonly string MenuHeader = "Bienvenido";        
+        public static readonly string Menu1 = "Generales";
+        public static readonly string Menu2 = "Categorías";
+        public static readonly string Menu3 = "Historial de pagos";
+        public static readonly string Menu4 = "Ajustes";
+        public static readonly string Menu5 = "Contáctanos";
+        //public static readonly string Menu6 = "Perfil";
+        //public static readonly string Menu7 = "Contáctanos";
 
 
         public static readonly string SocialMedia1 = "https://facebook.com";

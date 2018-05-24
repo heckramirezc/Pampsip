@@ -42,13 +42,12 @@
     <Compile Include="Models\FaceRecognition\FacePeticion.cs" />
     <Compile Include="Interfaces\ISQLite.cs" />
     <Compile Include="Controls\ExtendedEntry.cs" />
-    <Compile Include="Inicio.cs" />
     <Compile Include="Interfaces\INavigationService.cs" />
     <Compile Include="Views\Menu\Menu.cs" />
     <Compile Include="Views\Menu\MenuDTModeloVista.cs" />
     <Compile Include="Views\Menu\RootPagina.cs" />
-    <Compile Include="ViewModels\Menu\MenuVistaModelo.cs" />
-    <Compile Include="ViewModels\BaseVistaModelo.cs" />
+    <Compile Include="Contactanos\Menu\MenuVistaModelo.cs" />
+    <Compile Include="Contactanos\BaseVistaModelo.cs" />
     <Compile Include="Common\ColorResources.cs" />
     <Compile Include="Common\DecimalResources.cs" />
     <Compile Include="Common\FontResources.cs" />
@@ -68,6 +67,14 @@
     <Compile Include="Controls\IconView.cs" />
     <Compile Include="Views\Acceso\Login.cs" />
     <Compile Include="Views\Notificaciones\NotificacionCargando.cs" />
+    <Compile Include="Views\Generales\GeneralesVista.cs" />
+    <Compile Include="Views\Categorias\CategoriasVista.cs" />
+    <Compile Include="Views\Ajustes\AjustesVista.cs" />
+    <Compile Include="Views\Historial\HistorialVista.cs" />
+    <Compile Include="Views\Contactanos\ContactanosVista.cs" />
+    <Compile Include="Views\Acceso\LoginVerificacion.cs" />
+    <Compile Include="Models\SQLite\servicios.cs" />
+    <Compile Include="Views\Generales\ServiciosAsociadosDTModeloVista.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Plugin.Media.Abstractions">
@@ -127,6 +134,9 @@
     <Reference Include="ImageCircle.Forms.Plugin.Abstractions">
       <HintPath>..\packages\Xam.Plugins.Forms.ImageCircle.2.0.2\lib\netstandard1.0\ImageCircle.Forms.Plugin.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="Toasts.Forms.Plugin.Abstractions">
+      <HintPath>..\packages\Toasts.Forms.Plugin.2.0.4\lib\portable-net45+wp8+win8+wpa81+netcore451+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Toasts.Forms.Plugin.Abstractions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -136,7 +146,7 @@
     <Folder Include="Interfaces\" />
     <Folder Include="Models\" />
     <Folder Include="Views\" />
-    <Folder Include="ViewModels\" />
+    <Folder Include="Contactanos\" />
     <Folder Include="Models\Login\" />
     <Folder Include="Helpers\" />
     <Folder Include="Models\SQLite\" />
@@ -144,10 +154,15 @@
     <Folder Include="Controls\" />
     <Folder Include="Views\Acceso\" />
     <Folder Include="Views\Menu\" />
-    <Folder Include="ViewModels\Menu\" />
+    <Folder Include="Contactanos\Menu\" />
     <Folder Include="Common\" />
     <Folder Include="Models\Menu\" />
     <Folder Include="Views\Notificaciones\" />
+    <Folder Include="Views\Generales\" />
+    <Folder Include="Views\Categorias\" />
+    <Folder Include="Views\Historial\" />
+    <Folder Include="Views\Ajustes\" />
+    <Folder Include="Views\Contactanos\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.3.0.0.446417\build\netstandard1.0\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.3.0.0.446417\build\netstandard1.0\Xamarin.Forms.targets')" />

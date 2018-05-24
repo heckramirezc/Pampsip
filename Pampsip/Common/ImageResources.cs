@@ -10,7 +10,7 @@ namespace Pampsip.Common
 
         public static readonly FileImageSource LoginFacebook = "iLoginFacebook.png";
 
-        public static readonly FileImageSource MenuIcon = "iMenu.png";
+        public static readonly FileImageSource MenuIcon = "menu.png";
 
         public static readonly ImageSource SocialMedia1 = "iFacebook.png";
         public static readonly ImageSource SocialMedia2 = "iTwitter.png";

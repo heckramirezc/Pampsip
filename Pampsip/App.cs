@@ -1,6 +1,7 @@
 ﻿using System;
 using Pampsip.Data;
 using Pampsip.Helpers;
+using Pampsip.Pages.Menu;
 using Pampsip.Views;
 using Pampsip.Views.Acceso;
 using Xamarin.Forms;
@@ -16,6 +17,7 @@ namespace Pampsip
 
         public static double DisplayScreenWidth = 0f;
         public static double DisplayScreenHeight = 0f;
+		public static double NavigationBarHeight = 0f;
         public static double DisplayScaleFactor = 0f;
 
         public static PampsipDatabase Database
@@ -32,30 +34,53 @@ namespace Pampsip
 
         public App()
         {
+			MessagingCenter.Subscribe<Pages.Menu.Menu>(this, "logout", (sender) =>
+            {
+				MainPage = new Login();
+            });
 			MessagingCenter.Subscribe<Login>(this, "Login", (sender) =>
 			{
-				MainPage = new NavigationPage(new Inicio());
+				MainPage = new RootPagina();
+				Settings.session_Session_Token = "1";
+				Settings.session_idUsuario = "1";
 			});
+
+			MessagingCenter.Subscribe<LoginVerificacion>(this, "Login", (sender) =>
+            {
+                MainPage = new RootPagina();
+				Settings.session_Session_Token = "1";
+				Settings.session_idUsuario = "1";
+            });
+
 
 			if (string.IsNullOrEmpty(Settings.session_SubscriptionKey))
 				Settings.session_SubscriptionKey = Constantes.SubscriptionKey;
+
 			ManejadorDatos = new ManejadorDatos(new ServicioWeb());
-			MainPage = new Login();
+
+			if(!string.IsNullOrEmpty(Settings.session_Session_Token))
+				MainPage = new RootPagina();
+			else
+				MainPage = new Login();
+			
+			
         }
 
-        protected override void OnStart()
+		protected override void OnStart()
         {
-            // Handle when your app starts
+            System.Diagnostics.Debug.WriteLine("OnStart");
         }
 
         protected override void OnSleep()
         {
-            // Handle when your app sleeps
+            System.Diagnostics.Debug.WriteLine("OnSleep");
+			Constantes.RedSocialPresentada = true;
         }
 
         protected override void OnResume()
         {
-            // Handle when your app resumes
+            System.Diagnostics.Debug.WriteLine("OnResume");
+			Constantes.RedSocialPresentada = false;
         }
     }
 }

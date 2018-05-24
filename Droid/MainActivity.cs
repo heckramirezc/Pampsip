@@ -7,6 +7,8 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using Xamarin.Forms;
+using Plugin.Toasts;
 
 namespace Pampsip.Droid
 {
@@ -24,8 +26,10 @@ namespace Pampsip.Droid
             System.Diagnostics.Debug.WriteLine("Ancho: " + App.DisplayScreenWidth);
             System.Diagnostics.Debug.WriteLine("Alto: " + App.DisplayScreenHeight);
 
-            global::Xamarin.Forms.Forms.Init(this, bundle);
 
+            global::Xamarin.Forms.Forms.Init(this, bundle);
+			DependencyService.Register<ToastNotificatorImplementation>();
+            ToastNotificatorImplementation.Init(this);          
             LoadApplication(new App());
         }
     }

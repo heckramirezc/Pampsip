@@ -14,8 +14,9 @@ namespace Pampsip.Pages.Menu
 
             Label tituloMenu = new Label
             {
-                Margin = new Thickness((App.DisplayScreenWidth / 40), 0),
-                FontSize = (App.DisplayScreenWidth / 26.66666667),
+				HorizontalTextAlignment = TextAlignment.Center,
+                Margin = 0,
+				FontSize = (App.DisplayScreenWidth / 25.066666666666667),
                 VerticalTextAlignment = TextAlignment.Center,
             };
             tituloMenu.SetBinding(Label.TextProperty, "Title");
@@ -23,19 +24,19 @@ namespace Pampsip.Pages.Menu
             tituloMenu.SetBinding(Label.FontFamilyProperty, "FontFamily");
 
 
-			BoxView Separator = new BoxView { VerticalOptions = LayoutOptions.FillAndExpand, BackgroundColor = Color.FromHex("48016B"), HeightRequest = (App.DisplayScreenWidth / 160), Opacity = 0.25 };
+			BoxView Separator = new BoxView { VerticalOptions = LayoutOptions.FillAndExpand, BackgroundColor = Color.FromHex("BFBFBF"), HeightRequest = (App.DisplayScreenWidth / 341.818181818181818), Opacity = 0.25 };
             Separator.SetBinding(VisualElement.IsVisibleProperty, "SeparatorVisibility");
 
             Grid Menu = new Grid
-            {               
-                Padding = new Thickness((App.DisplayScreenWidth / 9.14285714), 0),
+            {               				
+				Padding = new Thickness((App.DisplayScreenWidth / 9.4), 0),
                 RowSpacing = 0,
-                HeightRequest = Convert.ToInt32((App.DisplayScreenHeight / 14.2)),
+				HeightRequest = Convert.ToInt32((App.DisplayScreenHeight / 13.533333333333333)),
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 VerticalOptions = LayoutOptions.Center,
                 RowDefinitions = {
                     new RowDefinition { Height = new GridLength (1, GridUnitType.Star) },
-                    new RowDefinition { Height = new GridLength ((App.DisplayScreenHeight / 284), GridUnitType.Absolute) }
+					new RowDefinition { Height = new GridLength ((App.DisplayScreenHeight / 341.818181818181818), GridUnitType.Absolute) }
                 },
                 ColumnDefinitions = {
                     new ColumnDefinition { Width = new GridLength (1, GridUnitType.Star) }
@@ -44,7 +45,7 @@ namespace Pampsip.Pages.Menu
             Menu.Children.Add(tituloMenu, 0, 0);
             Menu.Children.Add(Separator, 0, 1);
             View = Menu;
-            SelectedBackgroundColor = Color.FromHex("8FBD1E");
+			SelectedBackgroundColor = Color.Transparent;
         }
 
         protected override void OnBindingContextChanged()

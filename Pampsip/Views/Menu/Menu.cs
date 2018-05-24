@@ -3,133 +3,43 @@ using System.ComponentModel;
 using Xamarin.Forms;
 using Pampsip.Common;
 using Pampsip.ViewModels.Menu;
-using ImageCircle.Forms.Plugin.Abstractions;
 using Pampsip.Controls;
-//using FFImageLoading.Svg.Forms;
-using System.Xml.Linq;
-/*using FFImageLoading.Forms;
-using FFImageLoading.Work;
-using FFImageLoading.Transformations;*/
-using System.Collections.Generic;
 using Pampsip.Helpers;
 using Pampsip.Models.Menu;
 using Pampsip.Data;
-using Pampsip.Models.SQLite;
 using System.Threading.Tasks;
-using Pampsip.Interfaces;
-
+using Plugin.Toasts;
 
 namespace Pampsip.Pages.Menu
 {
     public class Menu : ContentPage, INotifyPropertyChanged
     {
-        CircleImage avatar;
+        
         public ExtendedListView Menus { get; private set; }
         public MenuVistaModelo modeloVista;
-        ActivityIndicator instagramIndicador, facebookIndicador;
-        BoxView Separator;
-		MenuTipo menuAnterior;
-        Button cerrarSesion;
-        CircleImage instagram, facebook;
+		ActivityIndicator facebookIndicador, twitterIndicador, messengerIndicador;        
+		MenuTipo menuAnterior;        
+        Grid facebook, twitter, messenger;
         public Menu()
         {
             Icon = ImageResources.MenuIcon;
             Title = StringResources.MenuTitle;
             BindingContext = modeloVista = new MenuVistaModelo();
-            BackgroundColor = ColorResources.MenuBackground;
+            BackgroundColor = ColorResources.MenuBackground;                             
 
-            MessagingCenter.Subscribe<RootPagina>(this, "Login", (sender) =>
-            {
-                if (!string.IsNullOrEmpty(Settings.session_idUsuario))
-                {
-                    usuarios usuario = App.Database.GetEmailUser(Convert.ToInt32(Settings.session_idUsuario));
-                    if (usuario != null)
-                    {
-                        cerrarSesion.IsVisible = true;
-                        if (!string.IsNullOrEmpty(usuario.avatar))
-                        {
-                            if (usuario.avatar.Contains("http"))
-                                avatar.Source = Xamarin.Forms.ImageSource.FromUri(new Uri(usuario.avatar));
-                            else
-                                avatar.Source = Xamarin.Forms.ImageSource.FromFile(usuario.avatar);
-                        }
-                    }
-
-
-
-                }
-            });
-
-            MessagingCenter.Subscribe<RootPagina>(this, "CreateUser", (sender) =>
-            {
-                if (!string.IsNullOrEmpty(Settings.session_idUsuario))
-                {
-                    usuarios usuario = App.Database.GetEmailUser(Convert.ToInt32(Settings.session_idUsuario));
-                    if (usuario != null && !string.IsNullOrEmpty(usuario.avatar))
-                    {
-                        if (usuario.avatar.Contains("http"))
-                            avatar.Source = Xamarin.Forms.ImageSource.FromUri(new Uri(usuario.avatar));
-                        else
-                            avatar.Source = Xamarin.Forms.ImageSource.FromFile(usuario.avatar);
-                    }
-                }
-            });
-
-			MessagingCenter.Subscribe<RootPagina>(this, "ActualizacionPerfil", (sender) =>
-            {
-                if (!string.IsNullOrEmpty(Settings.session_idUsuario))
-                {
-                    usuarios usuario = App.Database.GetEmailUser(Convert.ToInt32(Settings.session_idUsuario));
-                    if (usuario != null && !string.IsNullOrEmpty(usuario.avatar))
-                    {
-                        if (usuario.avatar.Contains("http"))
-                            avatar.Source = Xamarin.Forms.ImageSource.FromUri(new Uri(usuario.avatar));
-                        else
-                            avatar.Source = Xamarin.Forms.ImageSource.FromFile(usuario.avatar);
-                    }
-                }
-            });
-            
-
-            Separator = new BoxView { Margin = new Thickness(((App.DisplayScreenWidth / 9.14285714)), 0), HorizontalOptions = LayoutOptions.FillAndExpand, BackgroundColor = Color.FromHex("48016B"), HeightRequest = (App.DisplayScreenHeight / 284), Opacity = 0.25 };
             Menus = new ExtendedListView
             {
-                Header = new Grid { HorizontalOptions = LayoutOptions.FillAndExpand, Children = { Separator } },
+				IsScrollEnable = false,
                 Margin = 0,
                 ItemsSource = modeloVista.Menus,
-                RowHeight = Convert.ToInt32((App.DisplayScreenHeight / 14.2)),
+				RowHeight = Convert.ToInt32((App.DisplayScreenHeight / 13.533333333333333)),
                 IsPullToRefreshEnabled = false,
                 SeparatorVisibility = SeparatorVisibility.None,
                 SeparatorColor = Color.White,
                 HasUnevenRows = false
             };
 
-
-
-            MessagingCenter.Subscribe<RootPagina>(this, "Inicio", (sender) =>
-            {
-                ActualizarListView();
-            });
-
-            MessagingCenter.Subscribe<RootPagina>(this, "Notificaciones", (sender) =>
-            {
-                try
-                {
-                    foreach (var _menu in modeloVista.Menus)
-                    {
-                        _menu.isSelected = false;
-                        _menu.isSelectedSiguiente = false;
-                    }
-                    Separator.IsVisible = true;
-                    Menus.ItemsSource = null;
-                    Menus.ItemsSource = modeloVista.Menus;
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                }
-            });
-
+			menuAnterior = MenuTipo.Contactanos;
             Menus.ItemSelected += (sender, e) =>
              {
                  try
@@ -147,16 +57,8 @@ namespace Pampsip.Pages.Menu
                          else
                          {
                              _menu.isSelected = false;
-                             if (_menu.MenuTipoSiguiente == elemento.MenuTipo)
-                                 _menu.isSelectedSiguiente = true;
-                             else
-                                 _menu.isSelectedSiguiente = false;
                          }
-                     }
-                     if (elemento.MenuTipo == MenuTipo.Fidelizacion)
-                         Separator.IsVisible = false;
-                     else
-                         Separator.IsVisible = true;
+                     }                     
                      Menus.ItemsSource = null;
                      Menus.ItemsSource = modeloVista.Menus;
                  }
@@ -166,124 +68,90 @@ namespace Pampsip.Pages.Menu
                  }
              };
 
-            avatar = new CircleImage
+			Label header = new Label
             {
-                BorderColor = Color.FromHex("48016B"),
-                BorderThickness = (float)(App.DisplayScreenHeight / 227.2),
-                HeightRequest = (App.DisplayScreenHeight / 4.421052631578947),
-                WidthRequest = (App.DisplayScreenHeight / 4.421052631578947),
-                Aspect = Aspect.AspectFill,
-                Source = "avatar"
-            };
-            if (!string.IsNullOrEmpty(Settings.session_idUsuario))
-            {
-                usuarios usuario = App.Database.GetEmailUser(Convert.ToInt32(Settings.session_idUsuario));
-                if (usuario != null && !string.IsNullOrEmpty(usuario.avatar))
-                {
-                    if (usuario.avatar.Contains("http"))
-                        avatar.Source = Xamarin.Forms.ImageSource.FromUri(new Uri(usuario.avatar));
-                    else
-                        avatar.Source = Xamarin.Forms.ImageSource.FromFile(usuario.avatar);
-                }
-            }
-
-
-            CircleImage editar = new CircleImage
-            {
-                BorderColor = Color.FromHex("E17200"),
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Center,
-                Aspect = Aspect.AspectFill,
-                BorderThickness = (float)(App.DisplayScreenHeight / 227.2),
-                HeightRequest = (App.DisplayScreenHeight / 9.333333333333333),
-                WidthRequest = (App.DisplayScreenHeight / 9.333333333333333),
-                Source = "iEditar",
-
+				HorizontalTextAlignment = TextAlignment.Center,
+				HorizontalOptions = LayoutOptions.CenterAndExpand,
+                Text = "MENÚ",
+				FontFamily = Device.OnPlatform("Montserrat-Bold", "Montserrat-Bold", null),
+				TextColor = Color.FromHex("4D4D4D"),
+				FontSize = (App.DisplayScreenWidth / 15.04)
             };
 
-            RelativeLayout header = new RelativeLayout()
-            {
-                HeightRequest = App.DisplayScreenHeight / 4.518695306284805,
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Start,
-
-            };
-
-            header.Children.Add(avatar,
-                                Constraint.Constant(0),
-                                Constraint.Constant(0),
-                                Constraint.Constant(App.DisplayScreenHeight / 4.982456140350877),
-                                Constraint.Constant(App.DisplayScreenHeight / 4.982456140350877)
-            );
-
-            header.Children.Add(
-                editar,
-                Constraint.RelativeToView(avatar, (arg1, arg2) => { return arg2.Width - (arg2.Width / 4.8); }),
-                Constraint.RelativeToView(avatar, (arg1, arg2) => { return arg2.Height - (arg2.Height / 2.5); }),
-                Constraint.Constant(App.DisplayScreenHeight / 10.518518518518519),
-                Constraint.Constant(App.DisplayScreenHeight / 10.518518518518519)
-            );
-
-            TapGestureRecognizer headerTAP = new TapGestureRecognizer();
-            headerTAP.NumberOfTapsRequired = 1;
-            headerTAP.Tapped += async (sender, e) =>
-             {
-                 MessagingCenter.Send<RootPagina>((RootPagina)Application.Current.MainPage, "Perfil");
-             };
-            header.GestureRecognizers.Add(headerTAP);
+               
 
 
-            facebook = new CircleImage
-            {
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Center,
-                BorderColor = Color.FromHex("999999"),
-                BorderThickness = (float)(App.DisplayScreenHeight / 516.363636363636364),
-                HeightRequest = (App.DisplayScreenHeight / 13.853658536585366),
-                WidthRequest = (App.DisplayScreenHeight / 13.853658536585366),
-                Aspect = Aspect.AspectFill,
-                Source = "iFacebook",
+			facebook = new Grid
+			{
+				Children = 
+				{
+					new Image
+                    {
+                        HorizontalOptions = LayoutOptions.Start,
+                        VerticalOptions = LayoutOptions.Center,
+                        HeightRequest = (App.DisplayScreenHeight / 36.909090909090909),
+                        //WidthRequest = (App.DisplayScreenHeight / 13.853658536585366),
+                        Aspect = Aspect.AspectFit,
+                        Source = "iFacebook",
+                    }
+				}
+			};
 
-            };
+			twitter = new Grid
+			{
+				Children =
+				{
+					new Image
+					{
+						HorizontalOptions = LayoutOptions.Center,
+						VerticalOptions = LayoutOptions.Center,
+						HeightRequest = (App.DisplayScreenHeight / 36.909090909090909),
+                        //WidthRequest = (App.DisplayScreenHeight / 13.853658536585366),
+                        Aspect = Aspect.AspectFit,
+						Source = "iTwitter",
 
-            CircleImage twiiter = new CircleImage
-            {
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Center,
-                BorderColor = Color.FromHex("999999"),
-                BorderThickness = (float)(App.DisplayScreenHeight / 516.363636363636364),
-                HeightRequest = (App.DisplayScreenHeight / 13.853658536585366),
-                WidthRequest = (App.DisplayScreenHeight / 13.853658536585366),
-                Aspect = Aspect.AspectFill,
-                Source = "iTwitter",
+					}
+				}
+			};
 
-            };
+			messenger = new Grid
+			{
+				Children = 
+				{
+					new Image
+                    {
+                        HorizontalOptions = LayoutOptions.End,
+                        VerticalOptions = LayoutOptions.Center,
+                        HeightRequest = (App.DisplayScreenHeight / 36.909090909090909),
+                        //WidthRequest = (App.DisplayScreenHeight / 13.853658536585366),
+                        Aspect = Aspect.AspectFit,
+                        Source = "iMessenger",
 
-            instagram = new CircleImage
-            {
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Center,
-                BorderColor = Color.FromHex("999999"),
-                BorderThickness = (float)(App.DisplayScreenHeight / 516.363636363636364),
-                HeightRequest = (App.DisplayScreenHeight / 13.853658536585366),
-                WidthRequest = (App.DisplayScreenHeight / 13.853658536585366),
-                Aspect = Aspect.AspectFill,
-                Source = "iInstagram",
-
-            };
+                    }
+				}
+			};
 
             facebookIndicador = new ActivityIndicator
             {
-                HeightRequest = (App.DisplayScreenHeight / 13.853658536585366),
-                WidthRequest = (App.DisplayScreenHeight / 13.853658536585366),
+				HeightRequest = (App.DisplayScreenHeight / 36.909090909090909),
+				WidthRequest = (App.DisplayScreenHeight / 36.909090909090909),
                 IsRunning = false,
                 IsVisible = false
             };
 
-            instagramIndicador = new ActivityIndicator
+			twitterIndicador = new ActivityIndicator
             {
-                HeightRequest = (App.DisplayScreenHeight / 13.853658536585366),
-                WidthRequest = (App.DisplayScreenHeight / 13.853658536585366),
+				HeightRequest = (App.DisplayScreenHeight / 36.909090909090909),
+                WidthRequest = (App.DisplayScreenHeight / 36.909090909090909),
+                IsRunning = false,
+                IsVisible = false
+
+            };
+
+			messengerIndicador = new ActivityIndicator
+            {
+				HeightRequest = (App.DisplayScreenHeight / 36.909090909090909),
+                WidthRequest = (App.DisplayScreenHeight / 36.909090909090909),
                 IsRunning = false,
                 IsVisible = false
 
@@ -292,114 +160,139 @@ namespace Pampsip.Pages.Menu
 
 
             TapGestureRecognizer facebookTAP = new TapGestureRecognizer();
-            TapGestureRecognizer instagramTAP = new TapGestureRecognizer();
+            TapGestureRecognizer twitterTAP = new TapGestureRecognizer();
+			TapGestureRecognizer messengerTAP = new TapGestureRecognizer();
             facebookTAP.NumberOfTapsRequired = 1;
-            instagramTAP.NumberOfTapsRequired = 1;
-            /*facebookTAP.Tapped += async (object sender, EventArgs e) =>
+			twitterTAP.NumberOfTapsRequired = 1;
+			messengerTAP.NumberOfTapsRequired = 1;
+            facebookTAP.Tapped += async (object sender, EventArgs e) =>
              {
                  facebookIndicador.IsVisible = true;
                  facebookIndicador.IsRunning = true;
                  facebook.IsVisible = false;
-                 Device.OpenUri(new Uri("fb://profile/200742925975"));
-                 await Task.Delay(1000);
-                 if (Constantes.FacebookPresentado)
+				 Device.OpenUri(new Uri("fb://profile/604146393288718"));
+                 await Task.Delay(2000);
+				if (Constantes.RedSocialPresentada)
                  {
-                     Constantes.FacebookPresentado = false;
+					Constantes.RedSocialPresentada = false;
                  }
                  else
                  {
-                     Device.OpenUri(new Uri("https://www.facebook.com/supermercadoslatorre"));
+					Device.OpenUri(new Uri("https://www.facebook.com/Pampsip/"));
                  }
                  facebookIndicador.IsVisible = false;
                  facebookIndicador.IsRunning = false;
                  facebook.IsVisible = true;
              };
-            instagramTAP.Tapped += async (object sender, EventArgs e) =>
+
+			twitterTAP.Tapped += async (object sender, EventArgs e) =>
             {
-                instagramIndicador.IsVisible = true;
-                instagramIndicador.IsRunning = true;
-                instagram.IsVisible = false;
-                Device.OpenUri(new Uri("instagram://user?username=supermercadoslatorre"));
-                await Task.Delay(1000);
-                if (Constantes.FacebookPresentado)
+				twitterIndicador.IsVisible = true;
+				twitterIndicador.IsRunning = true;
+				twitter.IsVisible = false;
+				Device.OpenUri(new Uri("twitter://user?user_id=338874712"));
+				//Device.OpenUri(new Uri("twitter://userName?user_id=198829810"));
+                await Task.Delay(2000);
+				if (Constantes.RedSocialPresentada)
                 {
-                    Constantes.FacebookPresentado = false;
+					Constantes.RedSocialPresentada = false;
                 }
                 else
                 {
-                    Device.OpenUri(new Uri("https://www.instagram.com/supermercadoslatorre"));
+					Device.OpenUri(new Uri("https://twitter.com/elPeriodico"));
                 }
-                instagramIndicador.IsVisible = false;
-                instagramIndicador.IsRunning = false;
-                instagram.IsVisible = true;
+				twitterIndicador.IsVisible = false;
+				twitterIndicador.IsRunning = false;
+				twitter.IsVisible = true;
+            };
+
+			messengerTAP.Tapped += async (object sender, EventArgs e) =>
+            {
+				messengerIndicador.IsVisible = true;
+				messengerIndicador.IsRunning = true;
+				messenger.IsVisible = false;
+				Device.OpenUri(new Uri("https://www.messenger.com/t/604146393288718"));
+				messengerIndicador.IsVisible = false;
+				messengerIndicador.IsRunning = false;
+				messenger.IsVisible = true;
             };
             facebook.GestureRecognizers.Add(facebookTAP);
-            instagram.GestureRecognizers.Add(instagramTAP);
-*/
+			twitter.GestureRecognizers.Add(twitterTAP);
+			messenger.GestureRecognizers.Add(messengerTAP);
+
             Grid redesSociales = new Grid
             {
+				WidthRequest = App.DisplayScreenHeight/5.010180786080089,
+				HeightRequest = App.DisplayScreenHeight/36.909090909090909,
                 Padding = 0,
-                ColumnSpacing = App.DisplayScreenHeight / 28.4,
-                VerticalOptions = LayoutOptions.EndAndExpand,
-                HorizontalOptions = LayoutOptions.Center,
+                ColumnSpacing = 0,
+				HorizontalOptions = LayoutOptions.Center,
                 RowDefinitions = {
-                    new RowDefinition { Height = new GridLength ((App.DisplayScreenHeight / 13.853658536585366), GridUnitType.Absolute) }},
+					new RowDefinition { Height = new GridLength ((App.DisplayScreenHeight / 36.909090909090909), GridUnitType.Absolute) }},
                 ColumnDefinitions = {
-                    new ColumnDefinition { Width = new GridLength ((App.DisplayScreenHeight / 13.853658536585366), GridUnitType.Absolute) },
-                    new ColumnDefinition { Width = new GridLength ((App.DisplayScreenHeight / 13.853658536585366), GridUnitType.Absolute) },
-                    //new ColumnDefinition { Width = new GridLength ((App.DisplayScreenWidth / 7.80487805), GridUnitType.Absolute) }
+					new ColumnDefinition { Width = new GridLength ((App.DisplayScreenHeight / 15.030542358240267), GridUnitType.Absolute) },
+					new ColumnDefinition { Width = new GridLength ((App.DisplayScreenHeight / 15.030542358240267), GridUnitType.Absolute) },
+					new ColumnDefinition { Width = new GridLength ((App.DisplayScreenWidth / 15.030542358240267), GridUnitType.Star) }
                 }
             };
 
             redesSociales.Children.Add(new Grid { Children = { facebookIndicador, facebook } }, 0, 0);
-            //redesSociales.Children.Add(twiiter, 1, 0);
-            redesSociales.Children.Add(new Grid { Children = { instagramIndicador, instagram } }, 1, 0);
+			redesSociales.Children.Add(new Grid { Children = { twitterIndicador, twitter } }, 1, 0);
+			redesSociales.Children.Add(new Grid { Children = { messengerIndicador, messenger } }, 2, 0);
 
-            /*
+			Grid RedesSociales = new Grid
+			{				
+				Padding = 0,
+				HeightRequest = App.DisplayScreenHeight / 36.909090909090909,
+				HorizontalOptions = LayoutOptions.FillAndExpand,
+				Children = 
+				{
+					redesSociales
+				}
+			};
 
-            CachedImage i3 = new CachedImage()
+
+
+            Button cerrarSesion = new Button
             {
-                WidthRequest = 40,
-                HeightRequest = 40,
-                Aspect = Aspect.AspectFit,
-                Source = SvgImageSource.FromFile("iEditar.svg")
-            };
-
-            i3.Transformations = new System.Collections.Generic.List<ITransformation>() {
-                new CircleTransformation(){BorderHexColor = "E17200", BorderSize=40},
-            };
-
-
-            header.Children.Add(
-            ,0,0);
-*/
-            /*
-            SvgCachedImage i2 = new SvgCachedImage()
-            {
-                WidthRequest = 40,
-                HeightRequest = 40,
-                Source = "iEditar.svg"
-            };
-
-            */
-
-
-            cerrarSesion = new Button
-            {
-                BackgroundColor = Color.Transparent,
                 Margin = 0,
                 HorizontalOptions = LayoutOptions.CenterAndExpand,
                 Text = "cerrar sesión",
-                TextColor = Color.FromHex("999999"),
+				TextColor = Color.FromHex("BFBFBF"),
                 FontFamily = FontResources.ButtonFont,
-                FontSize = ((App.DisplayScreenHeight / 47.333333333333333))
+				FontSize = ((App.DisplayScreenHeight / 54.133333333333333)),
+				WidthRequest = App.DisplayScreenHeight / 5.678321678321678,
+				HeightRequest = App.DisplayScreenHeight/40.6
             };
+
+			Grid CerrarSesion = new Grid
+			{				
+				Children =
+				{
+					new StackLayout
+					{
+						HeightRequest = App.DisplayScreenHeight / 32.48,
+                        WidthRequest = App.DisplayScreenHeight / 5.678321678321678,
+						Spacing = App.DisplayScreenHeight/162.4,
+						HorizontalOptions = LayoutOptions.Center,
+						Children =
+						{
+							cerrarSesion,
+							new BoxView
+							{
+								HorizontalOptions = LayoutOptions.FillAndExpand,
+								BackgroundColor = Color.FromHex("BFBFBF"),
+								HeightRequest = (App.DisplayScreenWidth / 341.818181818181818),
+								Opacity = 0.25
+							}
+						}
+					}
+				}
+			};
+
             cerrarSesion.Clicked += CerrarSesion_Clicked;
 
-            if (string.IsNullOrEmpty(Settings.session_Session_Token) && string.IsNullOrEmpty(Settings.session_idUsuario))
-            {
-                cerrarSesion.IsVisible = false;
-            }
+
 
             Menus.ItemTemplate = new DataTemplate(typeof(MenuDTModeloVista));
 
@@ -409,38 +302,45 @@ namespace Pampsip.Pages.Menu
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 VerticalOptions = LayoutOptions.FillAndExpand,
             };
+            
 
-            Contenido.Children.Add(header,
-                              Constraint.Constant(App.DisplayScreenHeight / 10.716981132075472),
-                              Constraint.Constant(Device.RuntimePlatform == Device.iOS ? (App.DisplayScreenHeight / 11.591836734693878) : (App.DisplayScreenHeight / 19.586206896551724)),
-                              Constraint.Constant(App.DisplayScreenHeight / 3.952954276567611),
-                              Constraint.Constant(App.DisplayScreenHeight / 4.518695306284805)
+
+			Contenido.Children.Add(header,
+			                   Constraint.Constant(0),
+			                   Constraint.Constant(Device.RuntimePlatform == Device.iOS ? (App.DisplayScreenHeight / 8.923076923076923) : (App.DisplayScreenHeight / 10.278481012658228)),
+			                   Constraint.RelativeToParent((arg) => { return arg.Width; })
                              );
 
             Contenido.Children.Add(Menus,
                               Constraint.Constant(0),
-                              Constraint.Constant(Device.RuntimePlatform == Device.iOS ? (App.DisplayScreenHeight / 2.927835051546392) : (App.DisplayScreenHeight / 3.264367816091954)),
+			                  Constraint.Constant(Device.RuntimePlatform == Device.iOS ? (App.DisplayScreenHeight / 3.029850746268657) : (App.DisplayScreenHeight / 3.171875)),
                               Constraint.RelativeToParent((arg) => { return arg.Width; }),
-                              Constraint.Constant(App.DisplayScreenHeight / 2.007067137809187)
+			                  Constraint.Constant(App.DisplayScreenHeight / 2.942028985507246)
                              );
 
-            Contenido.Children.Add(redesSociales,
-                              Constraint.Constant(App.DisplayScreenHeight / 7.675675675675676),
-                                   Constraint.Constant(Device.RuntimePlatform == Device.iOS ? (App.DisplayScreenHeight / 1.149797570850202) : (App.DisplayScreenHeight / 1.19831223628692)),
-                              Constraint.Constant(App.DisplayScreenHeight / 5.568627450980392),
-                              Constraint.Constant(App.DisplayScreenHeight / 13.853658536585366)
-                             );
-
-
-            Contenido.Children.Add(cerrarSesion,
-                              Constraint.Constant(0),
-                              Constraint.Constant(Device.RuntimePlatform == Device.iOS ? (App.DisplayScreenHeight / 1.047970479704797) : (App.DisplayScreenHeight / 1.088122605363985)),
-                              Constraint.RelativeToParent((arg) => { return arg.Width; }),
-                              Constraint.Constant(App.DisplayScreenHeight / 35.5)
+            Contenido.Children.Add(RedesSociales,
+		                       Constraint.Constant(0),
+		                       Constraint.Constant(Device.RuntimePlatform == Device.iOS ? (App.DisplayScreenHeight / 1.280757097791798) : (App.DisplayScreenHeight / 1.305466237942122)),
+			                   Constraint.RelativeToParent((arg) => { return arg.Width; }),
+			                   Constraint.Constant(App.DisplayScreenHeight / 36.909090909090909)
                              );
 
 
+            Contenido.Children.Add(CerrarSesion,
+			                  Constraint.Constant(0),
+			                  Constraint.Constant(Device.RuntimePlatform == Device.iOS ? (App.DisplayScreenHeight / 1.087014725568942) : (App.DisplayScreenHeight / 1.104761904761905)),
+			                  Constraint.RelativeToParent((arg) => { return arg.Width; }),
+			                  Constraint.Constant(App.DisplayScreenHeight / 32.48)
+                             );
 
+			Contenido.Children.Add(new BoxView {BackgroundColor = Color.FromHex("BFBFBF") , Opacity = 0.08},
+			                       Constraint.RelativeToParent((arg) => { return arg.Width-(App.DisplayScreenHeight/203); }),
+			                       Constraint.Constant(20),
+			                       Constraint.Constant(App.DisplayScreenWidth/203),
+			                       Constraint.Constant(App.DisplayScreenHeight)
+			                      );
+
+            
             Content = Contenido;
         }
 
@@ -451,9 +351,7 @@ namespace Pampsip.Pages.Menu
                 foreach (var _menu in modeloVista.Menus)
                 {
                     _menu.isSelected = false;
-                    _menu.isSelectedSiguiente = false;
                 }
-                Separator.IsVisible = true;
                 Menus.ItemsSource = null;
                 Menus.ItemsSource = modeloVista.Menus;
             }
@@ -468,12 +366,16 @@ namespace Pampsip.Pages.Menu
         {
             base.OnAppearing();
             System.Diagnostics.Debug.WriteLine("Menu");
-            instagramIndicador.IsVisible = false;
+
             facebookIndicador.IsVisible = false;
+			twitterIndicador.IsVisible = false;
+			messengerIndicador.IsVisible = false;
             facebookIndicador.IsRunning = false;
-            instagramIndicador.IsRunning = false;
-            instagram.IsVisible = true;
+			twitterIndicador.IsRunning = false;
+			messengerIndicador.IsRunning = false;            
             facebook.IsVisible = true;
+			twitter.IsVisible = true;
+			messenger.IsVisible = true;
         }
 
 		protected override void OnBindingContextChanged()
@@ -484,27 +386,16 @@ namespace Pampsip.Pages.Menu
 
         void CerrarSesion_Clicked(object sender, EventArgs e)
         {
-
+			ShowToast(ToastNotificationType.Success, "Cierre de sesión", "Sesión finalizada con éxito", 4);
             Settings.session_idUsuario = string.Empty;
             Settings.session_Session_Token = string.Empty;            
-            MessagingCenter.Send<Menu>(this, "logout");
-            avatar.Source = "avatar";
-            cerrarSesion.IsVisible = false;
-            try
-            {
-                foreach (var _menu in modeloVista.Menus)
-                {
-                    _menu.isSelected = false;
-                    _menu.isSelectedSiguiente = false;
-                }
-                Separator.IsVisible = true;
-                Menus.ItemsSource = null;
-                Menus.ItemsSource = modeloVista.Menus;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-            }
+			MessagingCenter.Send<Pampsip.Pages.Menu.Menu>(this, "logout");
+        }
+
+		private async void ShowToast(ToastNotificationType type, string titulo, string descripcion, int tiempo)
+        {
+            var notificator = DependencyService.Get<IToastNotificator>();
+            bool tapped = await notificator.Notify(type, titulo, descripcion, TimeSpan.FromSeconds(tiempo));
         }
     }
 }

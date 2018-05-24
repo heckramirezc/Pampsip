@@ -15,42 +15,35 @@ namespace Pampsip.ViewModels.Menu
             Menus.Add(new Menus
             {
                 Title = StringResources.Menu1,
-                MenuTipo = MenuTipo.Fidelizacion,
-                MenuTipoSiguiente = MenuTipo.Suplemento
-            });
-            Menus.Add(new Menus
-            {
-                Title = StringResources.Menu4,
-                MenuTipo = MenuTipo.Suplemento,
-                MenuTipoSiguiente = MenuTipo.Listas
+                MenuTipo = MenuTipo.Generales,
+				SeparatorVisibility = true
+                //MenuTipoSiguiente = MenuTipo.Categorias
             });
             Menus.Add(new Menus
             {
                 Title = StringResources.Menu2,
-                MenuTipo = MenuTipo.Listas,
-                MenuTipoSiguiente = MenuTipo.Blog
+                MenuTipo = MenuTipo.Categorias,
+				SeparatorVisibility = true
+                //MenuTipoSiguiente = MenuTipo.Historial
             });
             Menus.Add(new Menus
             {
                 Title = StringResources.Menu3,
-                MenuTipo = MenuTipo.Blog,
-                MenuTipoSiguiente = MenuTipo.Ubicaciones
+                MenuTipo = MenuTipo.Historial,
+				SeparatorVisibility = true
+                //MenuTipoSiguiente = MenuTipo.Ajustes
+            });
+            Menus.Add(new Menus
+            {
+                Title = StringResources.Menu4,
+				SeparatorVisibility = true,
+                MenuTipo = MenuTipo.Ajustes,
+                //MenuTipoSiguiente = MenuTipo.Contactanos
             });
             Menus.Add(new Menus
             {
                 Title = StringResources.Menu5,
-                MenuTipo = MenuTipo.Ubicaciones,
-                MenuTipoSiguiente = MenuTipo.Perfil
-            });
-            Menus.Add(new Menus
-            {
-                Title = StringResources.Menu6,
-                MenuTipo = MenuTipo.Perfil,
-                MenuTipoSiguiente = MenuTipo.Contactanos
-            });
-            Menus.Add(new Menus
-            {
-                Title = StringResources.Menu7,
+				SeparatorVisibility = false,
                 MenuTipo = MenuTipo.Contactanos
             });
         }

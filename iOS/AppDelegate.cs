@@ -7,6 +7,7 @@ using ImageCircle.Forms.Plugin.iOS;
 using Lottie.Forms.iOS.Renderers;
 using Pampsip.Interfaces;
 using Pampsip.iOS.Services;
+using Plugin.Toasts;
 using UIKit;
 using Xamarin.Forms;
 
@@ -26,6 +27,8 @@ namespace Pampsip.iOS
 			InitializeServices();
 			ImageCircleRenderer.Init();
 			AnimationViewRenderer.Init();
+			DependencyService.Register<ToastNotificatorImplementation>();
+			ToastNotificatorImplementation.Init();
 			App.DisplayScreenWidth = (double)UIScreen.MainScreen.Bounds.Width;
             App.DisplayScreenHeight = (double)UIScreen.MainScreen.Bounds.Height;
             App.DisplayScaleFactor = (double)UIScreen.MainScreen.Scale;

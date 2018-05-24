@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using ImageCircle.Forms.Plugin.Abstractions;
 using Lottie.Forms;
 using Pampsip.Controls;
 using Pampsip.Data;
+using Pampsip.Interfaces;
 using Pampsip.Models.FaceRecognition;
 using Pampsip.Views.Notificaciones;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
+using Plugin.Toasts;
 using Rg.Plugins.Popup.Extensions;
 using Xamarin.Forms;
 
@@ -21,7 +25,14 @@ namespace Pampsip.Views.Acceso
         public Login()
         {
             //BindingContext = new LoginViewModel();
-            
+			try
+            {
+				DependencyService.Get<INavigationService>().HideStatusBar();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+            }            
 			Label Bienvenida = new Label
             {
 				HorizontalTextAlignment = TextAlignment.Center,
@@ -49,23 +60,34 @@ namespace Pampsip.Views.Acceso
                 Aspect = Aspect.AspectFill,
                 Source = "avatar"
             };
+
+			AnimationView avatarDefault = new AnimationView
+			{
+				AutoPlay = true,
+				Animation = "face_id.json",
+				Loop = true,
+				WidthRequest = App.DisplayScreenHeight / 5.8,
+				HeightRequest = App.DisplayScreenHeight / 5.8,
+				VerticalOptions = LayoutOptions.Center,
+				HorizontalOptions = LayoutOptions.Center,
+			};
+
+			ICommand avatarDefaultCommand = new Command(IdentifyAsync);
+			avatarDefault.ClickedCommand = avatarDefaultCommand;
 			Grid Avatar = new Grid
 			{
 				Children=
 				{
 					avatar,
-					new AnimationView
-                    {
-                        AutoPlay = true,
-                        Animation = "face_id.json",
-                        Loop = true,
-						WidthRequest = App.DisplayScreenHeight/5.8,
-						HeightRequest = App.DisplayScreenHeight/5.8,
-						VerticalOptions = LayoutOptions.Center,
-						HorizontalOptions = LayoutOptions.Center,
-                    }
+                    avatarDefault
 				}
 			};
+
+			TapGestureRecognizer ReconocimientoFacial = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
+			ReconocimientoFacial.Tapped += ReconocimientoFacial_Tapped;
+			Avatar.GestureRecognizers.Add(ReconocimientoFacial);
+			avatar.GestureRecognizers.Add(ReconocimientoFacial);
+			//avatarDefault.GestureRecognizers.Add(ReconocimientoFacial);
 
 			Usuario = new ExtendedEntry()
             {
@@ -80,7 +102,7 @@ namespace Pampsip.Views.Acceso
                 HasBorder = false,
 				FontSize = (App.DisplayScreenWidth / 25.066666666666667)
             };
-
+			Usuario.TextChanged+= Usuario_TextChanged;
 
 
             Contrasenia = new ExtendedEntry()
@@ -107,57 +129,42 @@ namespace Pampsip.Views.Acceso
 				FontSize = (App.DisplayScreenWidth / 26.857142857142857)
             };
 
+			TapGestureRecognizer ForgetTAP = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
+			ForgetTAP.Tapped+= ForgetTAP_Tapped;
+			Forget.GestureRecognizers.Add(ForgetTAP);
+
+			Button login = new Button
+			{
+				Margin = 0,
+				Text = "INGRESAR",
+				TextColor = Color.White,
+				FontFamily = Device.OnPlatform("Montserrat-Bold", "Montserrat-Bold", null),
+				FontSize = (App.DisplayScreenWidth / 25.066666666666667),
+				HorizontalOptions = LayoutOptions.Center,
+				VerticalOptions = LayoutOptions.Center,
+				BackgroundColor = Color.Transparent,
+				WidthRequest = (App.DisplayScreenHeight / 3.608888888888889),
+				HeightRequest = (App.DisplayScreenHeight / 20.3),
+			};
+			login.Clicked+= Login_Clicked;
 
 			Grid Login = new Grid
 			{
-				BackgroundColor = Color.Red,
+				Padding = 0,
 				Children = 
 				{
 					new Image
                     {
-						BackgroundColor = Color.Blue,
                         Source = "loginButton",
 						HorizontalOptions = LayoutOptions.Center,
-						VerticalOptions= LayoutOptions.Center
-                    },
-					new Button
-                    {
-						
-						Margin = new Thickness(-(App.DisplayScreenHeight/18.044444444444444),-(App.DisplayScreenHeight/162.4),0,0),
-                        Text = "INGRESAR",
-                        TextColor = Color.White,
-                        FontFamily = Device.OnPlatform("Montserrat-Bold", "Montserrat-Bold", null),
-                        FontSize = (App.DisplayScreenWidth / 25.066666666666667),
-                        HorizontalOptions = LayoutOptions.Center,
-						VerticalOptions = LayoutOptions.Center,
-						BackgroundColor = Color.Yellow,
+						VerticalOptions= LayoutOptions.Center,
 						WidthRequest = (App.DisplayScreenHeight / 3.608888888888889),
-						HeightRequest = (App.DisplayScreenHeight / 20.3),
-                        //BorderRadius = Convert.ToInt32(App.DisplayScreenWidth / 64)
-                    }
+                        HeightRequest = (App.DisplayScreenHeight / 20.3),
+                    },
+                    login
 				}
 			};
-
-			//Login.Clicked+= Login_Clicked;
-
-			Button ReconocimientoFacial = new Button
-            {
-				Text = "Reconocimiento Facial",
-                TextColor = Color.White,
-                FontFamily = Device.OnPlatform("NunitoSans-Bold", "NunitoSans-Bold", null),
-                FontSize = (App.DisplayScreenWidth / 24.6153846),
-                HorizontalOptions = LayoutOptions.Center,
-				BackgroundColor = Color.FromHex("b0d0e3"),
-                WidthRequest = (App.DisplayScreenWidth / 1.6),
-                HeightRequest = (App.DisplayScreenWidth / 10.6666667),
-                BorderRadius = Convert.ToInt32(App.DisplayScreenWidth / 64)
-            };
-			ReconocimientoFacial.Clicked += ReconocimientoFacial_Clicked;
-
-			BackgroundColor = Color.White;
-			Padding = 0;
-
-
+                        
 
 			RelativeLayout CC = new RelativeLayout()
             {
@@ -215,9 +222,9 @@ namespace Pampsip.Views.Acceso
 							new BoxView{BackgroundColor = Color.Transparent, HeightRequest =(App.DisplayScreenHeight /58.133333333333333), HorizontalOptions = LayoutOptions.FillAndExpand},
                             Contrasenia,
 							new BoxView{BackgroundColor = Color.FromHex("BFBFBF"), HeightRequest =(App.DisplayScreenWidth /341.818181818181818), HorizontalOptions = LayoutOptions.FillAndExpand},
-							new BoxView{BackgroundColor = Color.Transparent, HeightRequest =(App.DisplayScreenHeight /58.133333333333333), HorizontalOptions = LayoutOptions.FillAndExpand},
+							new BoxView{BackgroundColor = Color.Transparent, HeightRequest =(App.DisplayScreenHeight /27.066666666666667), HorizontalOptions = LayoutOptions.FillAndExpand},
                             Forget,                            
-							new BoxView{BackgroundColor = Color.Transparent, HeightRequest =(App.DisplayScreenHeight /18.044444444444444), HorizontalOptions = LayoutOptions.FillAndExpand},
+							new BoxView{BackgroundColor = Color.Transparent, HeightRequest =(App.DisplayScreenHeight /14.763636363636364), HorizontalOptions = LayoutOptions.FillAndExpand},
                             Login
                         },
                     }
@@ -230,7 +237,7 @@ namespace Pampsip.Views.Acceso
                             Constraint.Constant(App.DisplayScreenWidth)
                            );
 
-
+			Padding = 0;
 			BackgroundImage = "background";
 			Content = new ScrollView
 			{
@@ -240,9 +247,12 @@ namespace Pampsip.Views.Acceso
 			};
         }
 
-		async void ReconocimientoFacial_Clicked(object sender, EventArgs e)
+		void AvatarDefault_Click()
 		{
-
+			IdentifyAsync();
+		}
+		async void IdentifyAsync()
+		{
 			if (IsBusy)
                 return;
 
@@ -259,8 +269,11 @@ namespace Pampsip.Views.Acceso
                     photo = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
                     {
                         DefaultCamera = CameraDevice.Front,
-                        Directory = "Employee Directory",
-                        Name = "photo.jpg"
+						Directory = Constantes.LargePersonGroupId,
+                        Name = "person.jpg",
+						PhotoSize = PhotoSize.Medium,
+						//CustomPhotoSize = 40,
+						CompressionQuality = 65
                     });
                 }
                 else
@@ -268,12 +281,15 @@ namespace Pampsip.Views.Acceso
                     photo = await CrossMedia.Current.PickPhotoAsync();
                 }
 
-				await Navigation.PushPopupAsync(new NotificacionCargando());
+                await Navigation.PushPopupAsync(new NotificacionCargando());
                 using (var stream = photo.GetStream())
-                {					
+                {
                     var faces = await App.ManejadorDatos.DetectAsync(new Detect { Stream = stream, returnFaceId = true, returnFaceLandmarks = false });
-                    var faceIds = faces.Select(face => face.FaceId).ToArray();
-                    var results = await App.ManejadorDatos.IdentifyAsync(
+					Guid[] faceIds = faces.Select(face => face.FaceId).ToArray();
+
+					if(faceIds.Count()>0)
+					{
+						var results = await App.ManejadorDatos.IdentifyAsync(
                         new Identify
                         {
                             peticion = new PeticionIdentify
@@ -284,23 +300,36 @@ namespace Pampsip.Views.Acceso
                                 confidenceThreshold = 0.5
                             }
                         });
-                    var result = results[0].Candidates[0].PersonId;
-
-                    var person = await App.ManejadorDatos.GetPersonAsync(
-                        new Person
+						Candidate[] candidates= results[0].Candidates;
+						if (candidates.Count() > 0)
+						{
+							Guid result = results[0].Candidates[0].PersonId;                            
+                            var person = await App.ManejadorDatos.GetPersonAsync(
+                            new Person
+                            {
+                                personGroupId = Constantes.LargePersonGroupId,
+                                personId = result
+                            });
+                            MessagingCenter.Send<Login>(this, "Login");
+                            ShowToast(ToastNotificationType.Success, "Bienvenido", "Inicio de sesión exitoso", 4);                            
+						}
+                        else
                         {
-                            personGroupId = Constantes.LargePersonGroupId,
-                            personId = result
-                        });
-
-                    DisplayAlert("Alerta", $"La persona identificada es: {person.Name}.\r\n{person.UserData}", "OK");
+                            ShowToast(ToastNotificationType.Error, "Inicio de sesión", "Usuario no registrado", 4);                                           
+                            await Navigation.PopAllPopupAsync();
+                        }   
+					}
+					else
+					{
+						ShowToast(ToastNotificationType.Warning, "Inicio de sesión", "No se ha detectado ningún rostro.", 4);
+                        await Navigation.PopAllPopupAsync();
+					}                                                                                							
                 }
-				MessagingCenter.Send<Login>(this, "Login");
-                
             }
             catch (Exception ex)
             {
-                DisplayAlert("Alerta", ex.Message, "OK");
+                await Navigation.PopAllPopupAsync();
+				ShowToast(ToastNotificationType.Error, "Inicio de sesión", "Servicio no disponible", 4);
             }
             finally
             {
@@ -308,26 +337,43 @@ namespace Pampsip.Views.Acceso
             }
 		}
 
+		void ReconocimientoFacial_Tapped(object sender, EventArgs e)
+		{
+			IdentifyAsync();
+		}
+               
+		async void ForgetTAP_Tapped(object sender, EventArgs e)
+		{
+			await Navigation.PushPopupAsync(new NotificacionCargando());
+            await Task.Delay(3000);
+			await Navigation.PopAllPopupAsync();
+		}
 
-		async void Login_Clicked(object sender, System.EventArgs e)
-        {
+        async void Login_Clicked(object sender, EventArgs e)
+		{			
 			if (String.IsNullOrEmpty(Usuario.Text))
             {
-				await DisplayAlert("", "Por favor, indique el número CUI de su DPI", "Aceptar");
+                await DisplayAlert("", "Por favor, indique el número de CUI de su DPI", "Aceptar");
                 Usuario.Focus();
                 return;
             }
+			else if(Usuario.Text.Length<15)
+			{
+				await DisplayAlert("", "Por favor, indique un número de CUI válido", "Aceptar");
+                Usuario.Focus();
+                return;
+			}
             if (String.IsNullOrEmpty(Contrasenia.Text))
             {
                 await DisplayAlert("", "Por favor, indique su contraseña", "Aceptar");
                 Contrasenia.Focus();
                 return;
             }
-
-			await Navigation.PushPopupAsync(new NotificacionCargando());
-			await Task.Delay(5000);
-			MessagingCenter.Send<Login>(this, "Login");
-        }
+			string CUI = Regex.Replace(Usuario.Text, @"\s+", "");
+			System.Diagnostics.Debug.WriteLine(CUI);
+            await Navigation.PushPopupAsync(new NotificacionCargando());            
+			await Navigation.PushPopupAsync(new LoginVerificacion("1850"));
+		}       
 
 		string getContrasenia()
         {
@@ -335,5 +381,22 @@ namespace Pampsip.Views.Acceso
             //return MD5.GetHashString(Contrasenia.Text.Trim() + Constantes.Salt_Text.Trim());
             return Contrasenia.Text.Trim();
         }
-    }
+        
+		private async void ShowToast(ToastNotificationType type, string titulo, string descripcion, int tiempo)
+        {
+            var notificator = DependencyService.Get<IToastNotificator>();
+            bool tapped = await notificator.Notify(type, titulo, descripcion, TimeSpan.FromSeconds(tiempo));
+        }
+        
+		void Usuario_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			if (((ExtendedEntry)sender).Text.Length == 4 && (e.NewTextValue.Length>=e.OldTextValue.Length))
+				((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text + " ";
+			if (((ExtendedEntry)sender).Text.Length == 10 && (e.NewTextValue.Length >= e.OldTextValue.Length))
+                ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text + " ";			
+			if (((ExtendedEntry)sender).Text.Length == 16 && (e.NewTextValue.Length >= e.OldTextValue.Length))
+				((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0,((ExtendedEntry)sender).Text.Length-1);
+		}
+
+	}
 }

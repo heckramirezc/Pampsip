@@ -157,6 +157,12 @@
     <Reference Include="ImageCircle.Forms.Plugin.iOS">
       <HintPath>..\packages\Xam.Plugins.Forms.ImageCircle.2.0.2\lib\Xamarin.iOS10\ImageCircle.Forms.Plugin.iOS.dll</HintPath>
     </Reference>
+    <Reference Include="Toasts.Forms.Plugin.Abstractions">
+      <HintPath>..\packages\Toasts.Forms.Plugin.2.0.4\lib\Xamarin.iOS10\Toasts.Forms.Plugin.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Toasts.Forms.Plugin.iOS">
+      <HintPath>..\packages\Toasts.Forms.Plugin.2.0.4\lib\Xamarin.iOS10\Toasts.Forms.Plugin.iOS.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Pampsip\Pampsip.csproj">
@@ -189,6 +195,18 @@
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Renderers\ExtendedEntryRenderer.cs" />
     <Compile Include="Services\NavigationService.cs" />
+    <Compile Include="Renderers\ButtonGestureRenderer.cs" />
+    <Compile Include="Renderers\ExtendedDatePickerRenderer.cs" />
+    <Compile Include="Renderers\ExtendedEditorRenderer.cs" />
+    <Compile Include="Renderers\ExtendedLabelRenderer.cs" />
+    <Compile Include="Renderers\ExtendedListViewRenderer.cs" />
+    <Compile Include="Renderers\ExtendedNavigationRenderer.cs" />
+    <Compile Include="Renderers\ExtendedPickerRenderer.cs" />
+    <Compile Include="Renderers\ExtendedScrollViewRenderer.cs" />
+    <Compile Include="Renderers\ExtendedViewCellRenderer.cs" />
+    <Compile Include="Renderers\FrameViewRenderer.cs" />
+    <Compile Include="Renderers\IconViewRenderer.cs" />
+    <Compile Include="Resources\ServiciosAsociadosDTModeloVista.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\loader.json" />
@@ -211,6 +229,30 @@
     <BundleResource Include="Resources\loginButton.png" />
     <BundleResource Include="Resources\loginButton%402x.png" />
     <BundleResource Include="Resources\loginButton%403x.png" />
+    <BundleResource Include="Resources\iFacebook.png" />
+    <BundleResource Include="Resources\iFacebook%402x.png" />
+    <BundleResource Include="Resources\iFacebook%403x.png" />
+    <BundleResource Include="Resources\iMessenger.png" />
+    <BundleResource Include="Resources\iMessenger%402x.png" />
+    <BundleResource Include="Resources\iMessenger%403x.png" />
+    <BundleResource Include="Resources\iTwitter.png" />
+    <BundleResource Include="Resources\iTwitter%402x.png" />
+    <BundleResource Include="Resources\iTwitter%403x.png" />
+    <BundleResource Include="Resources\menu.png" />
+    <BundleResource Include="Resources\menu%402x.png" />
+    <BundleResource Include="Resources\menu%403x.png" />
+    <BundleResource Include="Resources\headerGeneral.png" />
+    <BundleResource Include="Resources\headerGeneral%402x.png" />
+    <BundleResource Include="Resources\headerGeneral%403x.png" />
+    <BundleResource Include="Resources\iConfig.png" />
+    <BundleResource Include="Resources\iConfig%402x.png" />
+    <BundleResource Include="Resources\iConfig%403x.png" />
+    <BundleResource Include="Resources\iServicioBackground.png" />
+    <BundleResource Include="Resources\iServicioBackground%402x.png" />
+    <BundleResource Include="Resources\iServicioBackground%403x.png" />
+    <BundleResource Include="Resources\iEEGSA.png" />
+    <BundleResource Include="Resources\iEEGSA%402x.png" />
+    <BundleResource Include="Resources\iEEGSA%403x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.3.0.0.482510\build\netstandard2.0\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.3.0.0.482510\build\netstandard2.0\Xamarin.Forms.targets')" />

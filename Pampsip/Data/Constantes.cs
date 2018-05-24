@@ -29,7 +29,8 @@ namespace Pampsip.Data
 		public static readonly string LargePersonGroupId = "pampsip-ciudadanos";
 		public static readonly string SubscriptionKey = "ce0f754951d842baaf2d2a8035d0f4ee";
 		public static readonly string SubscriptionKeyAlternative = "69f1478b2a4f43c783d7d80e576e4446";
-
+		public static bool RedSocialPresentada;
         public static bool ExisteConexionAInternet = true;
+		public static double NavigationBarHeight = 0f;
     }
 }

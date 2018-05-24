@@ -6,32 +6,29 @@ namespace Pampsip.Models.Menu
 {
     public enum MenuTipo
     {                
-        Inicio,
-        Fidelizacion,
-        Listas,
-        Blog,
-        Suplemento,
-        Ubicaciones,
-        Perfil,
-        Notificaciones,
-        Contactanos
+        Generales,
+        Categorias,
+        Historial,
+        Ajustes,
+		Contactanos,
+        Ubicaciones
     }
     public class Menus
     {
         public Menus()
         {
-            MenuTipo = MenuTipo.Inicio;
+			MenuTipo = MenuTipo.Generales;
         }
 
         public string Title { get; set; }
         public MenuTipo MenuTipo { get; set; }
-        public MenuTipo MenuTipoSiguiente { get; set; }
+        //public MenuTipo MenuTipoSiguiente { get; set; }
         public bool isSelected { get; set; }
-        public bool isSelectedSiguiente { get; set; }
+        //public bool isSelectedSiguiente { get; set; }
         public Color TextColor { 
             get
             {                
-                return isSelected ? Color.White : ColorResources.MenuTitle;
+				return isSelected ? Color.FromHex("21538B") : ColorResources.MenuTitle;
             } 
         }
 
@@ -40,16 +37,10 @@ namespace Pampsip.Models.Menu
         {
             get
             {                
-                return isSelected?FontResources.Label2Font:FontResources.LabelFont;
+				return isSelected?FontResources.LabelFont:FontResources.Label2Font;
             }
         }
 
-        public bool SeparatorVisibility
-        {
-            get
-            {
-                return isSelected || isSelectedSiguiente? false: true ;
-            }
-        }
+		public bool SeparatorVisibility { get; set; }
     }
 }
