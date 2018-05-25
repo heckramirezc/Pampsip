@@ -179,6 +179,7 @@
     <Folder Include="Renderers\" />
     <Folder Include="Services\" />
     <Folder Include="Resources\Fonts\" />
+    <Folder Include="Content\" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="LaunchScreen.storyboard" />
@@ -207,6 +208,7 @@
     <Compile Include="Renderers\FrameViewRenderer.cs" />
     <Compile Include="Renderers\IconViewRenderer.cs" />
     <Compile Include="Resources\ServiciosAsociadosDTModeloVista.cs" />
+    <Compile Include="Renderers\ExtendedPdfViewRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\loader.json" />
@@ -253,6 +255,28 @@
     <BundleResource Include="Resources\iEEGSA.png" />
     <BundleResource Include="Resources\iEEGSA%402x.png" />
     <BundleResource Include="Resources\iEEGSA%403x.png" />
+    <BundleResource Include="Resources\iEditar.png" />
+    <BundleResource Include="Resources\iEditar%402x.png" />
+    <BundleResource Include="Resources\iEditar%403x.png" />
+    <BundleResource Include="Resources\iContinuarA.png" />
+    <BundleResource Include="Resources\iContinuarA%402x.png" />
+    <BundleResource Include="Resources\iContinuarA%403x.png" />
+    <BundleResource Include="Resources\iContinuarB.png" />
+    <BundleResource Include="Resources\iContinuarB%402x.png" />
+    <BundleResource Include="Resources\iContinuarB%403x.png" />
+    <BundleResource Include="Resources\iFacturaBackground.png" />
+    <BundleResource Include="Resources\iFacturaBackground%402x.png" />
+    <BundleResource Include="Resources\iFacturaBackground%403x.png" />
+    <BundleResource Include="Resources\iFacturaSeleccionadaBackground.png" />
+    <BundleResource Include="Resources\iFacturaSeleccionadaBackground%402x.png" />
+    <BundleResource Include="Resources\iFacturaSeleccionadaBackground%403x.png" />
+    <BundleResource Include="Resources\iNoSeleccionado.png" />
+    <BundleResource Include="Resources\iNoSeleccionado%402x.png" />
+    <BundleResource Include="Resources\iNoSeleccionado%403x.png" />
+    <BundleResource Include="Resources\iSeleccionado.png" />
+    <BundleResource Include="Resources\iSeleccionado%402x.png" />
+    <BundleResource Include="Resources\iSeleccionado%403x.png" />
+    <BundleResource Include="Content\eegsaPDF.pdf" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.3.0.0.482510\build\netstandard2.0\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.3.0.0.482510\build\netstandard2.0\Xamarin.Forms.targets')" />

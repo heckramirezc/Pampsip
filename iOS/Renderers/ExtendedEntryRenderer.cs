@@ -218,11 +218,8 @@ YOURTEXTFIELD.attributedPlaceholder = [[NSAttributedString alloc] initWithString
         {
             try
             {
-                if (string.IsNullOrEmpty(view.Text) == false && view.IsStrikeThrough)
-                {
-                    var strikethrough = view.IsStrikeThrough ? NSUnderlineStyle.Single : NSUnderlineStyle.None;
-                    Control.AttributedText = new NSMutableAttributedString(view.Text, Control.Font, view.TextColor.ToUIColor(), strikethroughStyle: strikethrough);
-                }
+				NSAttributedString TextString = new NSAttributedString(view.Text, new UIStringAttributes() { ForegroundColor = view.TextColor.ToUIColor() });
+                Control.AttributedText = TextString;
             }
             catch (Exception ex)
             {
@@ -234,16 +231,8 @@ YOURTEXTFIELD.attributedPlaceholder = [[NSAttributedString alloc] initWithString
         {
             try
             {
-                if (string.IsNullOrEmpty(view.Text) == false && view.IsStrikeThrough)
-                {
-                    var strikethrough = view.IsStrikeThrough ? NSUnderlineStyle.Single : NSUnderlineStyle.None;
-                    Control.AttributedText = new NSMutableAttributedString(view.Text, Control.Font, view.TextColor.ToUIColor(), strikethroughStyle: strikethrough);
-                }
-                else
-                {
-                    NSAttributedString TextString = new NSAttributedString(view.Text, new UIStringAttributes() { ForegroundColor = view.TextColor.ToUIColor() });
-                    Control.AttributedText = TextString;
-                }
+				NSAttributedString TextString = new NSAttributedString(view.Text, new UIStringAttributes() { ForegroundColor = view.TextColor.ToUIColor() });
+                Control.AttributedText = TextString;
             }
             catch (Exception ex)
             {

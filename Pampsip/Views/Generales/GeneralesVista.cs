@@ -10,9 +10,10 @@ namespace Pampsip.Views.Generales
 {
 	public class GeneralesVista : ContentPage
     {
+		ExtendedListView ServiciosAsociados;
 		public GeneralesVista()
-		{
-
+		{			
+			NavigationPage.SetBackButtonTitle(this, "GENERALES");
 			Label Bienvenida = new Label
             {
 				BackgroundColor = Color.Transparent,
@@ -113,21 +114,22 @@ namespace Pampsip.Views.Generales
                 }
 			};
 
-			ExtendedListView ServiciosAsociados = new ExtendedListView
+			ServiciosAsociados = new ExtendedListView
 			{
 				ItemTemplate = new DataTemplate(typeof(ServiciosAsociadosDTModeloVista)),
 				Margin = 0,
 				HorizontalOptions = LayoutOptions.FillAndExpand,
 				VerticalOptions = LayoutOptions.FillAndExpand,
 				ItemsSource = servicios,
-				RowHeight = Convert.ToInt32((App.DisplayScreenWidth / 2.506666666666667)),
+				RowHeight = Convert.ToInt32((App.DisplayScreenWidth / 1.978947368421053)),
 				IsScrollEnable = true,
                 IsPullToRefreshEnabled = false,
                 SeparatorVisibility = SeparatorVisibility.None,
                 SeparatorColor = Color.White,
 				BackgroundColor = Color.Transparent,
-                HasUnevenRows = false
+				HasUnevenRows = false
             };
+			ServiciosAsociados.ItemSelected+= ServiciosAsociados_ItemSelected;
 
 			Grid Contenido = new Grid
             {
@@ -151,5 +153,14 @@ namespace Pampsip.Views.Generales
 			Padding = 0;
 			Content = Contenido;
 		}
-    }
+
+		async void ServiciosAsociados_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+		{
+			if (e.SelectedItem == null)
+				return;
+			await Navigation.PushAsync(new ServicioSasociadoDetalle((servicios)e.SelectedItem));
+			ServiciosAsociados.SelectedItem = null;
+		}
+
+	}
 }

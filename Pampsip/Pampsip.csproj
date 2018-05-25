@@ -46,8 +46,8 @@
     <Compile Include="Views\Menu\Menu.cs" />
     <Compile Include="Views\Menu\MenuDTModeloVista.cs" />
     <Compile Include="Views\Menu\RootPagina.cs" />
-    <Compile Include="Contactanos\Menu\MenuVistaModelo.cs" />
-    <Compile Include="Contactanos\BaseVistaModelo.cs" />
+    <Compile Include="ViewModels\Menu\MenuVistaModelo.cs" />
+    <Compile Include="ViewModels\BaseVistaModelo.cs" />
     <Compile Include="Common\ColorResources.cs" />
     <Compile Include="Common\DecimalResources.cs" />
     <Compile Include="Common\FontResources.cs" />
@@ -75,6 +75,14 @@
     <Compile Include="Views\Acceso\LoginVerificacion.cs" />
     <Compile Include="Models\SQLite\servicios.cs" />
     <Compile Include="Views\Generales\ServiciosAsociadosDTModeloVista.cs" />
+    <Compile Include="Views\Generales\ServicioSasociadoDetalle.cs" />
+    <Compile Include="Views\Generales\FacturasDTModeloVista.cs" />
+    <Compile Include="Models\SQLite\facturas.cs" />
+    <Compile Include="Views\Generales\ResumenPago.cs" />
+    <Compile Include="Views\Generales\FacturasCarretillaDTModeloVista.cs" />
+    <Compile Include="Controls\ExtendedPdfView.cs" />
+    <Compile Include="Views\Generales\FacturaVista.cs" />
+    <Compile Include="Views\Generales\MetodoPago.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Plugin.Media.Abstractions">
@@ -146,7 +154,7 @@
     <Folder Include="Interfaces\" />
     <Folder Include="Models\" />
     <Folder Include="Views\" />
-    <Folder Include="Contactanos\" />
+    <Folder Include="ViewModels\" />
     <Folder Include="Models\Login\" />
     <Folder Include="Helpers\" />
     <Folder Include="Models\SQLite\" />
@@ -154,7 +162,7 @@
     <Folder Include="Controls\" />
     <Folder Include="Views\Acceso\" />
     <Folder Include="Views\Menu\" />
-    <Folder Include="Contactanos\Menu\" />
+    <Folder Include="ViewModels\Menu\" />
     <Folder Include="Common\" />
     <Folder Include="Models\Menu\" />
     <Folder Include="Views\Notificaciones\" />

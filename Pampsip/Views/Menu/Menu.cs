@@ -190,7 +190,7 @@ namespace Pampsip.Pages.Menu
 				twitterIndicador.IsVisible = true;
 				twitterIndicador.IsRunning = true;
 				twitter.IsVisible = false;
-				Device.OpenUri(new Uri("twitter://user?user_id=338874712"));
+				Device.OpenUri(new Uri("twitter://user?user_id=999476282705502208"));
 				//Device.OpenUri(new Uri("twitter://userName?user_id=198829810"));
                 await Task.Delay(2000);
 				if (Constantes.RedSocialPresentada)
@@ -199,7 +199,7 @@ namespace Pampsip.Pages.Menu
                 }
                 else
                 {
-					Device.OpenUri(new Uri("https://twitter.com/elPeriodico"));
+					Device.OpenUri(new Uri("https://twitter.com/pamsip1"));
                 }
 				twitterIndicador.IsVisible = false;
 				twitterIndicador.IsRunning = false;
