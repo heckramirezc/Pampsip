@@ -39,13 +39,13 @@ namespace Pampsip.ViewModels.Menu
 				SeparatorVisibility = true,
                 MenuTipo = MenuTipo.Ajustes,
                 //MenuTipoSiguiente = MenuTipo.Contactanos
-            });
+            });/*
             Menus.Add(new Menus
             {
                 Title = StringResources.Menu5,
 				SeparatorVisibility = false,
                 MenuTipo = MenuTipo.Contactanos
-            });
+            });*/
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ImageCircle.Forms.Plugin.Abstractions;
 using Pampsip.Controls;
+using Pampsip.Data;
 using Pampsip.Models.SQLite;
 using Rg.Plugins.Popup.Extensions;
 using Xamarin.Forms;
@@ -14,8 +15,6 @@ namespace Pampsip.Views.Generales
 		ExtendedListView Facturas;
 		CircleImage continuar;
 		List<facturas> facturas;
-		int isEnableSelected = 1;
-		int isEnableUnSelected = 0;
 		public ServicioSasociadoDetalle(servicios Servicio)
 		{
 			NavigationPage.SetBackButtonTitle(this,Servicio.alias.ToUpper());
@@ -165,7 +164,7 @@ namespace Pampsip.Views.Generales
 		void ContinuarTAP_Tapped(object sender, EventArgs e)
 		{
 			if (facturas.Count(n => n.isSelected == true) > 0)
-				Navigation.PushAsync(new ResumenPago(facturas, isEnableSelected, isEnableUnSelected));
+				Navigation.PushAsync(new ResumenPago(facturas));
 		}
 
 
@@ -178,25 +177,25 @@ namespace Pampsip.Views.Generales
 			foreach (var factura in facturas)
 			{
 				index++;
-				if(factura==ContextoActual && index==isEnableSelected && !factura.isSelected)
+				if(factura==ContextoActual && index==Constantes.isEnableSelected && !factura.isSelected)
 				{
 					factura.isSelected = true;
 					ContextoActual.backgroundColor = Color.FromHex("4D4D4D");
 					ContextoActual.iconEstado = "iSeleccionado";
                     ContextoActual.background = "iFacturaSeleccionadaBackground";
-					isEnableUnSelected = isEnableSelected;
-					if(facturas.Count()!=isEnableSelected)
-					    isEnableSelected = isEnableSelected + 1;
+					Constantes.isEnableUnSelected = Constantes.isEnableSelected;
+					if(facturas.Count()!=Constantes.isEnableSelected)
+						Constantes.isEnableSelected = Constantes.isEnableSelected + 1;
 				}
-				else if (factura == ContextoActual && index == isEnableUnSelected && factura.isSelected)
+				else if (factura == ContextoActual && index == Constantes.isEnableUnSelected && factura.isSelected)
                 {                    
 					factura.isSelected = false;
                     ContextoActual.background = "iFacturaBackground";
 					ContextoActual.iconEstado = "iNoSeleccionado";
 					ContextoActual.backgroundColor = Color.FromHex("BFBFBF");
-					if(isEnableSelected!=1)
-					    isEnableSelected = isEnableUnSelected;
-					isEnableUnSelected = isEnableUnSelected-1;
+					if(Constantes.isEnableSelected!=1)
+						Constantes.isEnableSelected = Constantes.isEnableUnSelected;
+					Constantes.isEnableUnSelected = Constantes.isEnableUnSelected-1;
                 }
 			}
 

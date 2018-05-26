@@ -32,5 +32,9 @@ namespace Pampsip.Data
 		public static bool RedSocialPresentada;
         public static bool ExisteConexionAInternet = true;
 		public static double NavigationBarHeight = 0f;
+
+		public static int isEnableSelected = 1;
+		public static int isEnableUnSelected = 0;
+        
     }
 }

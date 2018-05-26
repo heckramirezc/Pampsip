@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Pampsip.Controls;
+using Pampsip.Data;
 using Pampsip.Models.SQLite;
 using Xamarin.Forms;
 
@@ -11,14 +12,11 @@ namespace Pampsip.Views.Generales
     {
 		ExtendedListView Facturas;        
         List<facturas> facturas;
-        int isEnableSelected = 1;
-        int isEnableUnSelected = 0;
-		public ResumenPago(List<facturas> facturas, int isEnableSelected, int isEnableUnSelected)
+		Image continuarImage;
+		public ResumenPago(List<facturas> facturas)
 		{
 			NavigationPage.SetBackButtonTitle(this, "RESUMEN");
 			this.facturas = facturas;
-			this.isEnableUnSelected = isEnableUnSelected;
-			this.isEnableSelected = isEnableSelected;
 			Label Bienvenida = new Label
 			{
 				BackgroundColor = Color.Transparent,
@@ -61,11 +59,33 @@ namespace Pampsip.Views.Generales
 
 			Facturas = new ExtendedListView
 			{
-				Header = new BoxView
+				Header = new StackLayout
 				{
-					HeightRequest = App.DisplayScreenWidth/9.894736842105263,
-					HorizontalOptions = LayoutOptions.FillAndExpand,
-					BackgroundColor = Color.Transparent,
+					Children = 
+					{
+						new BoxView
+                        {
+							HeightRequest = App.DisplayScreenWidth/9.4,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            BackgroundColor = Color.Transparent,
+                        },
+						new Label
+                        {                            
+                            BackgroundColor = Color.Transparent,
+                            HorizontalTextAlignment = TextAlignment.Center,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            FontFamily = Device.OnPlatform("Montserrat-Regular", "Montserrat-Regular", null),
+                            TextColor = Color.FromHex("4D4D4D"),
+                            FontSize = (App.DisplayScreenWidth / 26.857142857142857),
+                            Text = "A continuación te mostramos \r\nun resumen de lo que nos has\r\nindicado que deseas pagar.\r\n\r\nAsegurate de revisar bien cada detalle :)"
+                        },
+						new BoxView
+                        {
+                            HeightRequest = App.DisplayScreenWidth/9.894736842105263,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            BackgroundColor = Color.Transparent,
+                        }
+					}
 				},
 				ItemTemplate = new DataTemplate(typeof(FacturasCarretillaDTModeloVista)),
 				Margin = 0,
@@ -96,20 +116,22 @@ namespace Pampsip.Views.Generales
                 HeightRequest = (App.DisplayScreenHeight / 20.3),
             };
 			continuar.Clicked += Continuar_Clicked;
-            
+
+			continuarImage = new Image
+			{
+				Source = "loginButton",
+				HorizontalOptions = LayoutOptions.Center,
+				VerticalOptions = LayoutOptions.Center,
+				WidthRequest = (App.DisplayScreenHeight / 3.608888888888889),
+				HeightRequest = (App.DisplayScreenHeight / 20.3),
+			};
+
             Grid Continuar = new Grid
             {
                 Padding = 0,
                 Children =
                 {
-                    new Image
-                    {
-                        Source = "loginButton",
-                        HorizontalOptions = LayoutOptions.Center,
-                        VerticalOptions= LayoutOptions.Center,
-                        WidthRequest = (App.DisplayScreenHeight / 3.608888888888889),
-                        HeightRequest = (App.DisplayScreenHeight / 20.3),
-                    },
+					continuarImage,
 					continuar
                 }
             };
@@ -123,7 +145,6 @@ namespace Pampsip.Views.Generales
 				HorizontalOptions = LayoutOptions.FillAndExpand,
 				RowDefinitions = {
 					new RowDefinition { Height = new GridLength (1, GridUnitType.Auto) },
-					new RowDefinition { Height = new GridLength (1, GridUnitType.Auto) },
 					new RowDefinition { Height = new GridLength (1, GridUnitType.Star) },
 					new RowDefinition { Height = new GridLength (1, GridUnitType.Auto) }
 				},
@@ -133,17 +154,7 @@ namespace Pampsip.Views.Generales
 			};
 
 			Contenido.Children.Add(CC, 0, 0);
-			Contenido.Children.Add(new Label
-            {
-				BackgroundColor = Color.Transparent,                
-				HorizontalTextAlignment = TextAlignment.Center,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-				FontFamily = Device.OnPlatform("Montserrat-Regular", "Montserrat-Regular", null),
-				TextColor = Color.FromHex("4D4D4D"),
-				FontSize = (App.DisplayScreenWidth / 26.857142857142857),
-				Text = "A continuación te mostramos \r\nun resumen de lo que nos has\r\nindicado que deseas pagar.\r\n\r\nAsegurate de revisar bien cada detalle :)"
-            }, 0, 1);
-			Contenido.Children.Add(Facturas, 0, 2);
+			Contenido.Children.Add(Facturas, 0, 1);
 			Contenido.Children.Add(new Grid
 			{
 				BackgroundColor = Color.Transparent,
@@ -153,7 +164,7 @@ namespace Pampsip.Views.Generales
 				{
 					Continuar
 				}
-			}, 0, 3);
+			}, 0, 2);
 
 			Padding = 0;
 			Content = Contenido;
@@ -168,27 +179,32 @@ namespace Pampsip.Views.Generales
             foreach (var factura in facturas)
             {
                 index++;
-                if (factura == ContextoActual && index == isEnableSelected && !factura.isSelected)
+				if (factura == ContextoActual && index == Constantes.isEnableSelected && !factura.isSelected)
                 {
                     factura.isSelected = true;
                     ContextoActual.backgroundColor = Color.FromHex("4D4D4D");
                     ContextoActual.iconEstado = "iSeleccionado";
                     ContextoActual.background = "iFacturaSeleccionadaBackground";
-                    isEnableUnSelected = isEnableSelected;
-                    if (facturas.Count() != isEnableSelected)
-                        isEnableSelected = isEnableSelected + 1;
+					Constantes.isEnableUnSelected = Constantes.isEnableSelected;
+					if (facturas.Count() != Constantes.isEnableSelected)
+						Constantes.isEnableSelected = Constantes.isEnableSelected + 1;
                 }
-                else if (factura == ContextoActual && index == isEnableUnSelected && factura.isSelected)
+				else if (factura == ContextoActual && index == Constantes.isEnableUnSelected && factura.isSelected)
                 {
                     factura.isSelected = false;
                     ContextoActual.background = "iFacturaBackground";
                     ContextoActual.iconEstado = "iNoSeleccionado";
                     ContextoActual.backgroundColor = Color.FromHex("BFBFBF");
-                    if (isEnableSelected != 1)
-                        isEnableSelected = isEnableUnSelected;
-                    isEnableUnSelected = isEnableUnSelected - 1;
+					if (Constantes.isEnableSelected != 1)
+						Constantes.isEnableSelected = Constantes.isEnableUnSelected;
+					Constantes.isEnableUnSelected = Constantes.isEnableUnSelected - 1;
                 }
-            }         
+            }
+
+			if (facturas.Count(n => n.isSelected == true) > 0)
+				continuarImage.Source = "loginButton";
+			else
+				continuarImage.Source = "iButton";
             Facturas.SelectedItem = null;
         }
 

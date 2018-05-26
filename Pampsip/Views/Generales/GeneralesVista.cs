@@ -4,6 +4,7 @@ using ImageCircle.Forms.Plugin.Abstractions;
 using Pampsip.Controls;
 using Pampsip.Data;
 using Pampsip.Models.SQLite;
+using Pampsip.Pages.Menu;
 using Xamarin.Forms;
 
 namespace Pampsip.Views.Generales
@@ -43,6 +44,13 @@ namespace Pampsip.Views.Generales
                 Aspect = Aspect.AspectFill,
                 Source = "iConfig"
             };
+
+			TapGestureRecognizer configTAP = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
+			configTAP.Tapped+= (sender, e) => 
+			{
+				MessagingCenter.Send<RootPagina>((RootPagina)Application.Current.MainPage, "Categorias");   
+			};
+			config.GestureRecognizers.Add(configTAP);
 
 			RelativeLayout CC = new RelativeLayout()
             {				

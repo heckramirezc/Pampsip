@@ -56,6 +56,9 @@ namespace Pampsip
 			if (string.IsNullOrEmpty(Settings.session_SubscriptionKey))
 				Settings.session_SubscriptionKey = Constantes.SubscriptionKey;
 
+			if (string.IsNullOrEmpty(Settings.session_MetodoPago))
+				Settings.session_MetodoPago = "tarjeta";
+
 			ManejadorDatos = new ManejadorDatos(new ServicioWeb());
 
 			if(!string.IsNullOrEmpty(Settings.session_Session_Token))

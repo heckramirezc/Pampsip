@@ -113,8 +113,7 @@ namespace Pampsip.Views.Generales
 			Body.Children.Add(Estado, 1,0);
 
             Grid Contenido = new Grid
-            {
-				//new Thickness(0, (App.DisplayScreenWidth / 37.6), (App.DisplayScreenWidth / 37.6), (App.DisplayScreenWidth / 37.6))
+            {				
 				BackgroundColor = Color.Transparent,
 				Padding = new Thickness((App.DisplayScreenWidth/9.894736842105263), (App.DisplayScreenWidth/15.04), (App.DisplayScreenWidth / 9.894736842105263), 0),
                 HorizontalOptions = LayoutOptions.FillAndExpand,

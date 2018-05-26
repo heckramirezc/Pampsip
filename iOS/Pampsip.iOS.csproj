@@ -277,6 +277,21 @@
     <BundleResource Include="Resources\iSeleccionado%402x.png" />
     <BundleResource Include="Resources\iSeleccionado%403x.png" />
     <BundleResource Include="Content\eegsaPDF.pdf" />
+    <BundleResource Include="Resources\iMetodosPago.png" />
+    <BundleResource Include="Resources\iMetodosPago%402x.png" />
+    <BundleResource Include="Resources\iMetodosPago%403x.png" />
+    <BundleResource Include="Resources\BackgroundBlur.png" />
+    <BundleResource Include="Resources\BackgroundBlur%402x.png" />
+    <BundleResource Include="Resources\BackgroundBlur%403x.png" />
+    <BundleResource Include="Resources\backgroundModal.png" />
+    <BundleResource Include="Resources\backgroundModal%402x.png" />
+    <BundleResource Include="Resources\backgroundModal%403x.png" />
+    <BundleResource Include="Resources\iScanTarjeta.png" />
+    <BundleResource Include="Resources\iScanTarjeta%402x.png" />
+    <BundleResource Include="Resources\iScanTarjeta%403x.png" />
+    <BundleResource Include="Resources\iButton.png" />
+    <BundleResource Include="Resources\iButton%402x.png" />
+    <BundleResource Include="Resources\iButton%403x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.3.0.0.482510\build\netstandard2.0\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.3.0.0.482510\build\netstandard2.0\Xamarin.Forms.targets')" />

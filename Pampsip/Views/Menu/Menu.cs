@@ -318,6 +318,24 @@ namespace Pampsip.Pages.Menu
 			                  Constraint.Constant(App.DisplayScreenHeight / 2.942028985507246)
                              );
 
+			Contenido.Children.Add(new Label
+    			{
+    				HorizontalTextAlignment = TextAlignment.Center,
+    				HorizontalOptions = LayoutOptions.FillAndExpand,
+    				Margin = 0,
+				    TextColor = Color.FromHex("BFBFBF"),
+    				FontSize = (App.DisplayScreenWidth / 25.066666666666667),
+    				VerticalTextAlignment = TextAlignment.Center,
+    				Text = "Contáctanos",
+				    FontFamily =  Device.OnPlatform("Montserrat-Regular", "Montserrat-Regular", null),
+                    
+    			},
+                  Constraint.Constant(0),
+			      Constraint.Constant(Device.RuntimePlatform == Device.iOS ? (App.DisplayScreenHeight / 1.407279029462738) : (App.DisplayScreenHeight / 1.43716814159292)),
+                  Constraint.RelativeToParent((arg) => { return arg.Width; })
+              );
+
+
             Contenido.Children.Add(RedesSociales,
 		                       Constraint.Constant(0),
 		                       Constraint.Constant(Device.RuntimePlatform == Device.iOS ? (App.DisplayScreenHeight / 1.280757097791798) : (App.DisplayScreenHeight / 1.305466237942122)),

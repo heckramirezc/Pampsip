@@ -25,7 +25,19 @@ namespace Pampsip.Pages.Menu
 			{
 				Constantes.NavigationBarHeight = App.NavigationBarHeight;
 			}
-			*/	
+			*/
+
+			MessagingCenter.Subscribe<RootPagina>(this, "Generales", async (sender) =>
+			{
+				await Navigation.PopAllPopupAsync();
+				menu.Menus.SelectedItem = menu.modeloVista.Menus[0];
+			});
+
+			MessagingCenter.Subscribe<RootPagina>(this, "Categorias", async (sender) =>
+            {                
+                menu.Menus.SelectedItem = menu.modeloVista.Menus[1];
+            });
+
 			try
 			{
 				DependencyService.Get<INavigationService>().ShowStatusBar();

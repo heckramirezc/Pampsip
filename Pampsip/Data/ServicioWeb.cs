@@ -71,11 +71,15 @@ namespace Pampsip.Data
             }
 
             return Usuario;
-        }  
+        }
+
+
+
 
         
 		public async Task<List<FaceResponse>> DetectAsync(Detect peticion)
-        {        
+        {
+			await TestAsync();
 			Face = new List<FaceResponse>();
 			var uri = new Uri(Constantes.URL_Detect);
 			HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, Constantes.URL_Detect+peticion.parametros);
@@ -101,6 +105,26 @@ namespace Pampsip.Data
                 System.Diagnostics.Debug.WriteLine("ERROR: " + ex.Message);
             }         
             return Face;
+        }
+
+
+		public async Task TestAsync()
+        {            
+			var uri = new Uri("http://18.221.210.242:8081/2018_pamsip/web/index.php/pamsip/servicios/1769297460302");            
+            try
+            {
+				System.Diagnostics.Debug.WriteLine("PARAMETROS: " + uri);
+				var respuesta = await pampsipAPI.GetStringAsync(uri);                                
+                System.Diagnostics.Debug.WriteLine("RESPUESTA: " + respuesta);                
+            }
+            catch (HttpRequestException e)
+            {
+                System.Diagnostics.Debug.WriteLine("ERROR: " + e.Message);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("ERROR: " + ex.Message);
+            }            
         }
 
 		public async Task<List<IdentifyResponse>> IdentifyAsync(Identify peticion)

@@ -1,4 +1,6 @@
-﻿using Xamarin.Forms;
+﻿using Pampsip.Views.Notificaciones;
+using Rg.Plugins.Popup.Extensions;
+using Xamarin.Forms;
 
 namespace Pampsip.Views.Historial
 {
@@ -6,6 +8,17 @@ namespace Pampsip.Views.Historial
     {
 		public HistorialVista()
 		{
+			Label Bienvenida = new Label
+            {
+                BackgroundColor = Color.Transparent,
+                Margin = new Thickness((App.DisplayScreenWidth / 12.533333333333333), 0, 0, 0),
+                HorizontalTextAlignment = TextAlignment.Start,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Text = "PAMPSIP",
+                FontFamily = Device.OnPlatform("Montserrat-Bold", "Montserrat-Bold", null),
+                TextColor = Color.White,
+                FontSize = (App.DisplayScreenWidth / 15.04)
+            };
 			RelativeLayout CC = new RelativeLayout()
             {
                 Padding = 0,
@@ -26,6 +39,14 @@ namespace Pampsip.Views.Historial
                             Constraint.Constant(App.DisplayScreenWidth),
                             Constraint.Constant(App.DisplayScreenHeight / 2.889679715302491)
             );
+
+			CC.Children.Add(Bienvenida,
+                            Constraint.Constant(0),
+                            Constraint.Constant(App.DisplayScreenHeight / 8.12),
+                            Constraint.Constant(App.DisplayScreenWidth)
+                           );
+
+
             Grid Contenido = new Grid
             {
                 Padding = 0,
@@ -48,5 +69,11 @@ namespace Pampsip.Views.Historial
             Padding = 0;
             Content = Contenido;
 		}
+
+		async protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            await Navigation.PushPopupAsync(new NotificacionEnConstruccion());
+        }
     }
 }
