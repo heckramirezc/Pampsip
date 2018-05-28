@@ -86,6 +86,7 @@
     <Compile Include="Views\Generales\DatosPago.cs" />
     <Compile Include="Views\Generales\Pagar.cs" />
     <Compile Include="Views\Notificaciones\NotificacionEnConstruccion.cs" />
+    <Compile Include="Interfaces\ICardService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Plugin.Media.Abstractions">

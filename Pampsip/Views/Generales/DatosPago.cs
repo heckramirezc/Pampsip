@@ -3,22 +3,29 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Pampsip.Controls;
 using Pampsip.Helpers;
+using Pampsip.Interfaces;
 using Pampsip.Models.SQLite;
 using Rg.Plugins.Popup.Extensions;
 using Rg.Plugins.Popup.Pages;
 using Xamarin.Forms;
 
 namespace Pampsip.Views.Generales
-{
+{	
 	public class DatosPago : ContentPage
 	{
 		List<facturas> facturas;
+		bool escaneando;
+		Grid Contenido;
+		Label Bienvenida;
 		ExtendedEntry Nombre, Numero, Vencimiento, CVV;
-		public DatosPago(List<facturas> facturas)
+		BoxView CVVBV, VencimientoBV, NumeroBV, NombreBV;
+		int TOTALICIMO;
+		public DatosPago(List<facturas> facturas, int TOTALICIMO)
 		{
+			this.TOTALICIMO = TOTALICIMO;
 			NavigationPage.SetBackButtonTitle(this, "DATOS DE PAGO");
 			this.facturas = facturas;
-			Label Bienvenida = new Label
+			Bienvenida = new Label
 			{
 				BackgroundColor = Color.Transparent,
 				Margin = new Thickness((App.DisplayScreenWidth / 12.533333333333333), 0, 0, 0),
@@ -26,7 +33,7 @@ namespace Pampsip.Views.Generales
 				HorizontalOptions = LayoutOptions.FillAndExpand,
 				FontFamily = Device.OnPlatform("Montserrat-Bold", "Montserrat-Bold", null),
 				TextColor = Color.White,
-				FontSize = (App.DisplayScreenWidth / 15.04),
+				FontSize = (App.DisplayScreenWidth / 18.8),
 				Text = "DATOS DE PAGO"
 			};
 
@@ -58,7 +65,7 @@ namespace Pampsip.Views.Generales
 						   );
                                                   
 
-			Grid Contenido = new Grid
+			Contenido = new Grid
 			{
 				Padding = 0,
 				BackgroundColor = Color.White,
@@ -75,34 +82,316 @@ namespace Pampsip.Views.Generales
 			};
 
 			Contenido.Children.Add(CC, 0, 0);
-			if(Settings.session_MetodoPago.Equals("tarjeta"))
-			    Contenido.Children.Add(ContenidoTarjeta(), 0, 1);
+			if(Settings.session_MetodoPago.Equals("tarjeta"))			   
+			{
+				Contenido.Children.Add(ContenidoTarjeta(), 0, 1);
+				Bienvenida.Text = "DATOS DE PAGO";
+			}
 			else
-				Contenido.Children.Add(ContenidoTransferencia(), 0, 1);			
+			{
+				Contenido.Children.Add(ContenidoTransferencia(), 0, 1);
+				Bienvenida.Text = "SELECCIONA TU CUENTA";
+			}
+				
 
 			Padding = 0;
 			Content = Contenido;
 		}
 
+		void CambiarMetodoTAP_Tapped(object sender, EventArgs e)
+		{
+			if (Settings.session_MetodoPago.Equals("tarjeta"))
+            {
+				Contenido.Children.Remove(ContenidoTransferencia());
+                Contenido.Children.Add(ContenidoTarjeta(), 0, 1);
+                Bienvenida.Text = "DATOS DE PAGO";
+            }
+            else
+            {
+				Contenido.Children.Remove(ContenidoTarjeta());
+                Contenido.Children.Add(ContenidoTransferencia(), 0, 1);
+                Bienvenida.Text = "SELECCIONA TU CUENTA";
+            }
+
+		}
+
+
+		void CVV_TextChanged(object sender, TextChangedEventArgs e)
+		{
+            if (((ExtendedEntry)sender).Text.Length == 4 && (e.NewTextValue.Length >= e.OldTextValue.Length))
+                ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
+            if (!string.IsNullOrEmpty(CVV.Text))
+            {
+                CVVBV.BackgroundColor = Color.FromHex("4D4D4D");
+                CVV.FontFamily = Device.OnPlatform("Montserrat-Bold", "Montserrat-Bold", null);
+                if (CVV.Text.Length < 3)
+                    CVV.TextColor = Color.FromHex("E9242A");
+                else
+                    CVV.TextColor = Color.FromHex("4D4D4D");
+            }
+            else
+            {
+                CVVBV.BackgroundColor = Color.FromHex("BFBFBF");
+                CVV.FontFamily = Device.OnPlatform("Montserrat-Regular", "Montserrat-Regular", null);
+            }
+        }
+
+
+		void Vencimiento_TextChanged(object sender, TextChangedEventArgs e)
+		{
+            if (((ExtendedEntry)sender).Text.Length == 1 && (e.NewTextValue.Length >= e.OldTextValue.Length) && e.NewTextValue.Length == 1)
+            {
+                if (Convert.ToInt32(e.NewTextValue) >= 2)
+                {
+                    Vencimiento.Text = "0" + e.NewTextValue;
+                }
+            }
+
+            if (((ExtendedEntry)sender).Text.Length == 2 && (e.NewTextValue.Length >= e.OldTextValue.Length) && e.NewTextValue.Length == 2 && !((ExtendedEntry)sender).Text.Equals("12"))
+            {
+                if (Convert.ToInt32(e.NewTextValue) > 12)
+                {
+                    ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1) + "2";
+                    return;
+                }
+            }
+
+            if (((ExtendedEntry)sender).Text.Length == 2 && (e.NewTextValue.Length >= e.OldTextValue.Length))
+                ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text + " / ";
+
+            if (((ExtendedEntry)sender).Text.Length == 5 && (e.OldTextValue.Length >= e.NewTextValue.Length))
+                ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
+            if (((ExtendedEntry)sender).Text.Length == 4 && (e.OldTextValue.Length == 5))
+                ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 3);
+
+            if (((ExtendedEntry)sender).Text.Length == 8 && (e.NewTextValue.Length >= e.OldTextValue.Length))
+                ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
+
+            if (!string.IsNullOrEmpty(Vencimiento.Text))
+            {
+                VencimientoBV.BackgroundColor = Color.FromHex("4D4D4D");
+                Vencimiento.FontFamily = Device.OnPlatform("Montserrat-Bold", "Montserrat-Bold", null);
+                if (!IsValidExpiration(Regex.Replace(Vencimiento.Text.Trim(), @"\s+", "")))
+                    Vencimiento.TextColor = Color.FromHex("E9242A");
+                else
+                    Vencimiento.TextColor = Color.FromHex("4D4D4D");
+            }
+            else
+            {
+                VencimientoBV.BackgroundColor = Color.FromHex("BFBFBF");
+                Vencimiento.FontFamily = Device.OnPlatform("Montserrat-Regular", "Montserrat-Regular", null);
+            }
+        }
+
+
+		void Numero_TextChanged(object sender, TextChangedEventArgs e)
+		{
+            if (((ExtendedEntry)sender).Text.Length == 4 && (e.NewTextValue.Length >= e.OldTextValue.Length))
+                ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text + " ";
+            if (((ExtendedEntry)sender).Text.Length == 5 && (e.OldTextValue.Length >= e.NewTextValue.Length))
+                ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
+            else if (((ExtendedEntry)sender).Text.Length == 4 && (e.OldTextValue.Length == 5))
+                ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
+
+            if (((ExtendedEntry)sender).Text.Length == 9 && (e.NewTextValue.Length >= e.OldTextValue.Length))
+                ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text + " ";
+            if (((ExtendedEntry)sender).Text.Length == 10 && (e.OldTextValue.Length >= e.NewTextValue.Length))
+                ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
+            else if (((ExtendedEntry)sender).Text.Length == 9 && (e.OldTextValue.Length == 10))
+                ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
+
+            if (((ExtendedEntry)sender).Text.Length == 14 && (e.NewTextValue.Length >= e.OldTextValue.Length))
+                ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text + " ";
+            if (((ExtendedEntry)sender).Text.Length == 15 && (e.OldTextValue.Length >= e.NewTextValue.Length))
+                ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
+            else if (((ExtendedEntry)sender).Text.Length == 14 && (e.OldTextValue.Length == 15))
+                ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
+
+
+            if (((ExtendedEntry)sender).Text.Length == 20 && (e.NewTextValue.Length >= e.OldTextValue.Length))
+                ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
+
+            if (!string.IsNullOrEmpty(Numero.Text))
+            {
+                NumeroBV.BackgroundColor = Color.FromHex("4D4D4D");
+                Numero.FontFamily = Device.OnPlatform("Montserrat-Bold", "Montserrat-Bold", null);
+                if (!IsValidNumber(Regex.Replace(Numero.Text.Trim(), @"\s+", "")))
+                    Numero.TextColor = Color.FromHex("E9242A");
+                else
+                    Numero.TextColor = Color.FromHex("4D4D4D");
+
+            }
+            else
+            {
+                NumeroBV.BackgroundColor = Color.FromHex("BFBFBF");
+                Numero.FontFamily = Device.OnPlatform("Montserrat-Regular", "Montserrat-Regular", null);
+            }
+        }
+
+
+		void Nombre_TextChanged(object sender, TextChangedEventArgs e)
+		{
+            if (!string.IsNullOrEmpty(Nombre.Text))
+            {
+                NombreBV.BackgroundColor = Color.FromHex("4D4D4D");
+                Nombre.FontFamily = Device.OnPlatform("Montserrat-Bold", "Montserrat-Bold", null);
+            }
+            else
+            {
+                NombreBV.BackgroundColor = Color.FromHex("BFBFBF");
+                Nombre.FontFamily = Device.OnPlatform("Montserrat-Regular", "Montserrat-Regular", null);
+            }
+        }
+
+
 		private View ContenidoTransferencia()
 		{
-			return new Grid
+			Label CambiarMetodo = new Label
+            {
+                BackgroundColor = Color.Transparent,
+                HorizontalTextAlignment = TextAlignment.Center,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                FontFamily = Device.OnPlatform("Montserrat-Regular", "Montserrat-Regular", null),
+                TextColor = Color.FromHex("BFBFBF"),
+                FontSize = (App.DisplayScreenWidth / 26.857142857142857),
+                Text = "Cambiar método de pago"
+            };
+
+            TapGestureRecognizer CambiarMetodoTAP = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
+            CambiarMetodoTAP.Tapped += CambiarMetodoTAP_Tapped;
+            CambiarMetodo.GestureRecognizers.Add(CambiarMetodoTAP);
+
+			Button continuar = new Button
+            {
+                Margin = 0,
+                Text = "CONTINUAR",
+                TextColor = Color.White,
+                FontFamily = Device.OnPlatform("Montserrat-Bold", "Montserrat-Bold", null),
+                FontSize = (App.DisplayScreenWidth / 25.066666666666667),
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center,
+                BackgroundColor = Color.Transparent,
+                WidthRequest = (App.DisplayScreenHeight / 3.608888888888889),
+                HeightRequest = (App.DisplayScreenHeight / 20.3),
+            };
+            continuar.Clicked += Continuar_Clicked;
+
+			Image continuarImage = new Image
+            {
+                Source = "loginButton",
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center,
+                WidthRequest = (App.DisplayScreenHeight / 3.608888888888889),
+                HeightRequest = (App.DisplayScreenHeight / 20.3),
+            };
+                                   
+			Grid Continuar = new Grid
+            {
+                Padding = 0,
+                Children =
+                {
+                    continuarImage,
+                    continuar
+                }
+            };
+
+			ExtendedPicker Cuentas = new ExtendedPicker
 			{
-				VerticalOptions = LayoutOptions.Center,
-				Children = 
-				{
-					new Label
-                    {
-                        BackgroundColor = Color.Transparent,
-                        HorizontalTextAlignment = TextAlignment.Center,
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        FontFamily = Device.OnPlatform("Montserrat-Regular", "Montserrat-Regular", null),
-                        TextColor = Color.FromHex("4D4D4D"),
-                        FontSize = (App.DisplayScreenWidth / 26.857142857142857),
-                        Text = "VISTA EN CONSTRUCCIÓN"
-                    }
-				}
+				XAlign = TextAlignment.Center,
+				TextColor = Color.FromHex("4D4D4D"),
+				FontFamily = Device.OnPlatform("Montserrat-Bold", "Montserrat-Bold", null),
+				HasBorder = false,
+                Title = "¿A qué área pertenece tu consulta?",
 			};
+
+			Cuentas.Items.Add("BI - 2345 - 0 - 5315");
+			Cuentas.Items.Add("BANRURAL - 93872183921 - 0 - 12");
+			Cuentas.Items.Add("G&T - 63635 - 05- 4");
+
+
+
+			return new ScrollView
+            {
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                Content = new StackLayout
+                {
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    Spacing = 0,
+                    Padding = new Thickness((App.DisplayScreenWidth / 9.060240963855422), 0),
+                    Children =
+                    {
+                        new BoxView
+                        {
+                            HeightRequest = App.DisplayScreenWidth / 8.355555555555556,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            BackgroundColor = Color.Transparent
+                        },
+                        new Label
+                        {
+                            BackgroundColor = Color.Transparent,
+                            HorizontalTextAlignment = TextAlignment.Center,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            FontFamily = Device.OnPlatform("Montserrat-Regular", "Montserrat-Regular", null),
+                            TextColor = Color.FromHex("4D4D4D"),
+                            FontSize = (App.DisplayScreenWidth / 26.857142857142857),
+							Text = "Selecciona la cuenta a debitar"
+                        },
+                        new BoxView
+                        {
+                            HeightRequest = App.DisplayScreenWidth / 17.090909090909091,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            BackgroundColor = Color.Transparent
+                        },                        
+                        CambiarMetodo,
+                        new BoxView
+                        {
+                            HeightRequest = App.DisplayScreenWidth / 9.894736842105263,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            BackgroundColor = Color.Transparent
+                        },
+						new StackLayout
+						{
+							Spacing = App.DisplayScreenWidth/37.6,
+							Children = 
+							{
+								new Grid
+                                {
+                                    Children =
+                                    {
+                                        Cuentas,
+										new Image
+										{
+											Aspect = Aspect.Fill,
+											HorizontalOptions = LayoutOptions.End,
+											VerticalOptions = LayoutOptions.Center,
+											WidthRequest = App.DisplayScreenWidth/36.049856184084372,
+											HeightRequest = App.DisplayScreenWidth/25.066666666666667
+										}
+                                    }
+                                },
+								new BoxView { BackgroundColor = Color.FromHex("4D4D4D"), HeightRequest = (App.DisplayScreenWidth / 341.818181818181818), HorizontalOptions = LayoutOptions.FillAndExpand },
+							}
+						},
+						new BoxView
+                        {
+                            HeightRequest = App.DisplayScreenWidth / 9.894736842105263,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            BackgroundColor = Color.Transparent
+                        },
+                        new Grid
+                        {
+                            BackgroundColor = Color.Transparent,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            Padding = new Thickness(0, (App.DisplayScreenHeight / 20.3)),
+                            Children =
+                            {
+                                Continuar
+                            }
+                        }
+                    }
+                }
+            };
 		}
 
 		private View ContenidoTarjeta()
@@ -117,6 +406,11 @@ namespace Pampsip.Views.Generales
 				FontSize = (App.DisplayScreenWidth / 26.857142857142857),
 				Text = "Cambiar método de pago"
 			};
+
+			TapGestureRecognizer CambiarMetodoTAP = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
+			CambiarMetodoTAP.Tapped+= CambiarMetodoTAP_Tapped;
+			CambiarMetodo.GestureRecognizers.Add(CambiarMetodoTAP);
+
 
 			Nombre = new ExtendedEntry()
             {
@@ -133,20 +427,8 @@ namespace Pampsip.Views.Generales
                 HasBorder = false,
 				FontSize = (App.DisplayScreenWidth / 34.181818181818182)
             };
-			BoxView NombreBV = new BoxView { BackgroundColor = Color.FromHex("BFBFBF"), HeightRequest = (App.DisplayScreenWidth / 341.818181818181818), HorizontalOptions = LayoutOptions.FillAndExpand };
-			Nombre.TextChanged+= (sender, e) => 
-			{
-				if(!string.IsNullOrEmpty(Nombre.Text))
-				{
-					NombreBV.BackgroundColor = Color.FromHex("4D4D4D");
-					Nombre.FontFamily = Device.OnPlatform("Montserrat-Bold", "Montserrat-Bold", null);
-				}
-				else
-				{
-                    NombreBV.BackgroundColor = Color.FromHex("BFBFBF");
-					Nombre.FontFamily = Device.OnPlatform("Montserrat-Regular", "Montserrat-Regular", null);
-                }
-			};
+			NombreBV = new BoxView { BackgroundColor = Color.FromHex("BFBFBF"), HeightRequest = (App.DisplayScreenWidth / 341.818181818181818), HorizontalOptions = LayoutOptions.FillAndExpand };
+			Nombre.TextChanged+= Nombre_TextChanged;
 			Numero = new ExtendedEntry()
             {
                 Margin = 0,
@@ -162,50 +444,8 @@ namespace Pampsip.Views.Generales
                 HasBorder = false,
 				FontSize = (App.DisplayScreenWidth / 34.181818181818182)
             };
-			BoxView NumeroBV = new BoxView { BackgroundColor = Color.FromHex("BFBFBF"), HeightRequest = (App.DisplayScreenWidth / 341.818181818181818), HorizontalOptions = LayoutOptions.FillAndExpand };
-			Numero.TextChanged+= (sender, e) => 
-			{
-				if (((ExtendedEntry)sender).Text.Length == 4 && (e.NewTextValue.Length>=e.OldTextValue.Length))
-                    ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text + " ";				
-				if (((ExtendedEntry)sender).Text.Length == 5 && (e.OldTextValue.Length >= e.NewTextValue.Length))
-					((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
-				else if (((ExtendedEntry)sender).Text.Length == 4 && (e.OldTextValue.Length == 5))                
-                    ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
-				
-                if (((ExtendedEntry)sender).Text.Length == 9 && (e.NewTextValue.Length >= e.OldTextValue.Length))
-                    ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text + " ";          
-				if (((ExtendedEntry)sender).Text.Length == 10 && (e.OldTextValue.Length >= e.NewTextValue.Length))
-                    ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
-                else if (((ExtendedEntry)sender).Text.Length == 9 && (e.OldTextValue.Length == 10))
-					((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
-
-				if (((ExtendedEntry)sender).Text.Length == 14 && (e.NewTextValue.Length >= e.OldTextValue.Length))
-                    ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text + " ";				
-				if (((ExtendedEntry)sender).Text.Length == 15 && (e.OldTextValue.Length >= e.NewTextValue.Length))
-                    ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
-				else if (((ExtendedEntry)sender).Text.Length == 14 && (e.OldTextValue.Length == 15))
-                    ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
-
-
-				if (((ExtendedEntry)sender).Text.Length == 20 && (e.NewTextValue.Length >= e.OldTextValue.Length))
-                    ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
-				
-				if (!string.IsNullOrEmpty(Numero.Text))
-                {
-					NumeroBV.BackgroundColor = Color.FromHex("4D4D4D");
-					Numero.FontFamily = Device.OnPlatform("Montserrat-Bold", "Montserrat-Bold", null);
-					if(!IsValidNumber(Regex.Replace(Numero.Text.Trim(), @"\s+", "")))
-						Numero.TextColor = Color.FromHex("E9242A");
-					else
-						Numero.TextColor = Color.FromHex("4D4D4D");
-						
-                }
-                else
-                {
-					NumeroBV.BackgroundColor = Color.FromHex("BFBFBF");
-					Numero.FontFamily = Device.OnPlatform("Montserrat-Regular", "Montserrat-Regular", null);
-                }
-			};
+			NumeroBV = new BoxView { BackgroundColor = Color.FromHex("BFBFBF"), HeightRequest = (App.DisplayScreenWidth / 341.818181818181818), HorizontalOptions = LayoutOptions.FillAndExpand };
+			Numero.TextChanged+= Numero_TextChanged;
             
 			Vencimiento = new ExtendedEntry()
             {
@@ -222,52 +462,8 @@ namespace Pampsip.Views.Generales
                 HasBorder = false,
 				FontSize = (App.DisplayScreenWidth / 34.181818181818182)
             };
-			BoxView VencimientoBV = new BoxView { BackgroundColor = Color.FromHex("BFBFBF"), HeightRequest = (App.DisplayScreenWidth / 341.818181818181818), HorizontalOptions = LayoutOptions.FillAndExpand };
-			Vencimiento.TextChanged+= (sender, e) => 
-			{
-				if (((ExtendedEntry)sender).Text.Length == 1 && (e.NewTextValue.Length >= e.OldTextValue.Length) && e.NewTextValue.Length==1)
-				{
-					if(Convert.ToInt32(e.NewTextValue)>=2)
-					{
-						Vencimiento.Text = "0" + e.NewTextValue;
-					}
-				}
-
-				if (((ExtendedEntry)sender).Text.Length == 2 && (e.NewTextValue.Length >= e.OldTextValue.Length) && e.NewTextValue.Length == 2 && !((ExtendedEntry)sender).Text.Equals("12"))
-                {
-                    if (Convert.ToInt32(e.NewTextValue) > 12)
-                    {
-						((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1)+"2";
-						return;
-                    }
-                }
-
-				if (((ExtendedEntry)sender).Text.Length == 2 && (e.NewTextValue.Length >= e.OldTextValue.Length))
-                    ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text + " / ";
-                
-				if (((ExtendedEntry)sender).Text.Length == 5 && (e.OldTextValue.Length >= e.NewTextValue.Length))
-                    ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
-				if (((ExtendedEntry)sender).Text.Length == 4 && (e.OldTextValue.Length == 5))
-                    ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 3);
-				
-                if (((ExtendedEntry)sender).Text.Length == 8 && (e.NewTextValue.Length >= e.OldTextValue.Length))
-                    ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
-
-				if (!string.IsNullOrEmpty(Vencimiento.Text))
-                {
-					VencimientoBV.BackgroundColor = Color.FromHex("4D4D4D");
-					Vencimiento.FontFamily = Device.OnPlatform("Montserrat-Bold", "Montserrat-Bold", null);
-					if (!IsValidExpiration(Regex.Replace(Vencimiento.Text.Trim(), @"\s+", "")))
-						Vencimiento.TextColor = Color.FromHex("E9242A");
-                    else
-						Vencimiento.TextColor = Color.FromHex("4D4D4D");
-                }
-                else
-                {
-					VencimientoBV.BackgroundColor = Color.FromHex("BFBFBF");
-					Vencimiento.FontFamily = Device.OnPlatform("Montserrat-Regular", "Montserrat-Regular", null);
-                }
-			};
+			VencimientoBV = new BoxView { BackgroundColor = Color.FromHex("BFBFBF"), HeightRequest = (App.DisplayScreenWidth / 341.818181818181818), HorizontalOptions = LayoutOptions.FillAndExpand };
+			Vencimiento.TextChanged+= Vencimiento_TextChanged;
 
 			CVV = new ExtendedEntry()
             {
@@ -284,27 +480,9 @@ namespace Pampsip.Views.Generales
                 HasBorder = false,
 				FontSize = (App.DisplayScreenWidth / 34.181818181818182)
             };
-			BoxView CVVBV = new BoxView { BackgroundColor = Color.FromHex("BFBFBF"), HeightRequest = (App.DisplayScreenWidth / 341.818181818181818), HorizontalOptions = LayoutOptions.FillAndExpand };
+			CVVBV = new BoxView { BackgroundColor = Color.FromHex("BFBFBF"), HeightRequest = (App.DisplayScreenWidth / 341.818181818181818), HorizontalOptions = LayoutOptions.FillAndExpand };
 
-			CVV.TextChanged+= (sender, e) => 
-			{
-				if (((ExtendedEntry)sender).Text.Length == 4 && (e.NewTextValue.Length >= e.OldTextValue.Length))
-                    ((ExtendedEntry)sender).Text = ((ExtendedEntry)sender).Text.Substring(0, ((ExtendedEntry)sender).Text.Length - 1);
-				if (!string.IsNullOrEmpty(CVV.Text))
-                {
-					CVVBV.BackgroundColor = Color.FromHex("4D4D4D");
-					CVV.FontFamily = Device.OnPlatform("Montserrat-Bold", "Montserrat-Bold", null);
-					if (CVV.Text.Length<3)
-						CVV.TextColor = Color.FromHex("E9242A");
-                    else
-						CVV.TextColor = Color.FromHex("4D4D4D");
-                }
-                else
-                {
-					CVVBV.BackgroundColor = Color.FromHex("BFBFBF");
-					CVV.FontFamily = Device.OnPlatform("Montserrat-Regular", "Montserrat-Regular", null);
-                }
-			};
+			CVV.TextChanged+= CVV_TextChanged;
 
 
 			Label Total = new Label
@@ -315,7 +493,7 @@ namespace Pampsip.Views.Generales
 				FontFamily = Device.OnPlatform("Montserrat-Bold", "Montserrat-Bold", null),
 				TextColor = Color.FromHex("4D4D4D"),
 				FontSize = (App.DisplayScreenWidth / 18.8),
-				Text = "TOTAL: Q.2,150.00"
+				Text = "TOTAL: Q."+TOTALICIMO
             };
 
 			Grid FooterTarjeta = new Grid
@@ -357,7 +535,7 @@ namespace Pampsip.Views.Generales
 
 			Image continuarImage = new Image
 			{
-				Source = "iButton",
+				Source = "loginButton",
 				HorizontalOptions = LayoutOptions.Center,
 				VerticalOptions = LayoutOptions.Center,
 				WidthRequest = (App.DisplayScreenHeight / 3.608888888888889),
@@ -410,7 +588,8 @@ namespace Pampsip.Views.Generales
 			TapGestureRecognizer escanearTAP = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
 			escanearTAP.Tapped+= (sender, e) => 
 			{
-				
+				escaneando = true;
+				DependencyService.Get<ICardService>().StartCapture();
 			};
 
 			escanearTarjeta.GestureRecognizers.Add(escanearTAP);
@@ -553,7 +732,7 @@ namespace Pampsip.Views.Generales
 
 		async void Continuar_Clicked(object sender, EventArgs e)
 		{
-			/*if(Settings.session_MetodoPago.Equals("tarjeta"))
+			if(Settings.session_MetodoPago.Equals("tarjeta"))
 			{
 				if (String.IsNullOrEmpty(Nombre.Text))
                 {
@@ -602,10 +781,48 @@ namespace Pampsip.Views.Generales
 			else
 			{
 				
-			}*/
+			}
 			PopupPage pagar = new Pagar();
             //pagar.bac
 			await Navigation.PushPopupAsync(pagar);
+		}
+		protected override void OnAppearing()
+		{
+			base.OnAppearing();
+			if(escaneando)
+			{
+				try
+				{								
+        			Nombre.TextChanged -= Nombre_TextChanged;
+        			Numero.TextChanged -= Numero_TextChanged;
+        			Vencimiento.TextChanged -= Vencimiento_TextChanged;
+        			CVV.TextChanged -= CVV_TextChanged;
+        			string numero = DependencyService.Get<ICardService>().GetCardNumber();
+
+        			numero = numero.Substring(0, 4) + " " + numero.Substring(4, 4) + " " + numero.Substring(8, 4) + " " + numero.Substring(12, 4);
+        			            
+        			Numero.Text = numero;
+        			Nombre.Text = DependencyService.Get<ICardService>().GetCardholderName();
+        			string mes = DependencyService.Get<ICardService>().GetExpiryMonth();
+        			string anio = DependencyService.Get<ICardService>().GetExpiryYear();
+        			if (mes.Length == 1)
+        				mes = "0" + mes;
+        			anio = anio.Substring(2);
+        			Vencimiento.Text = mes +" / "+anio;
+        			CVV.Text = DependencyService.Get<ICardService>().GetCVV();
+
+
+        			Nombre.TextChanged += Nombre_TextChanged;
+                    Numero.TextChanged += Numero_TextChanged;
+        			Vencimiento.TextChanged += Vencimiento_TextChanged;
+        			CVV.TextChanged += CVV_TextChanged;				
+				}
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                }
+				escaneando = false;
+			}
 		}
 	}
 }

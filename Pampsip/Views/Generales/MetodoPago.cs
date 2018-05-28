@@ -294,7 +294,16 @@ namespace Pampsip.Views.Generales
 
 		async void Continuar_Clicked(object sender, EventArgs e)
 		{
-			await Navigation.PushAsync(new DatosPago(facturas));
+			int TOTAL=0;
+			foreach(var fact in facturas)
+			{
+				string valor = fact.saldo.Substring(9);
+				double valor2 = Convert.ToDouble(valor);
+                int saldo = Convert.ToInt32(valor2);
+				TOTAL = TOTAL + saldo;
+			}
+
+			await Navigation.PushAsync(new DatosPago(facturas, TOTAL));
 		}
 	}
 }

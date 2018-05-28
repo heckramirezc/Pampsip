@@ -89,36 +89,43 @@ namespace Pampsip.Views.Generales
                     alias = "FACTURA MARZO 2018",
                     proveedor="EEGSA",
 					categoria=string.Empty,
-                    saldo="TOTAL: Q.2,150.00",
+					saldo=!Servicio.alias.Equals("CASA PROPIA")?"TOTAL: Q.2,150.00":"TOTAL: Q.852.00",
 					aviso=string.Empty,
-                    vencimiento = "Ven: 13 - 07 - 1991",
+                    vencimiento = "Ven: 01 - 03 - 2018",
 					background = "iFacturaBackground",
 					iconEstado = "iNoSeleccionado",
 					backgroundColor = Color.FromHex("BFBFBF")
                 },
-				new facturas{
-					alias = "FACTURA ABRIL 2018",
-                    proveedor="EEGSA",
-                    categoria=string.Empty,
-                    saldo="TOTAL: Q.2,150.00",
-					aviso=string.Empty,
-                    vencimiento = "Ven: 13 - 07 - 1991",
-					background = "iFacturaBackground",
-                    iconEstado = "iNoSeleccionado",
-                    backgroundColor = Color.FromHex("BFBFBF")
-                },
-				new facturas{
-					alias = "FACTURA MAYO 2018",
-                    proveedor="EEGSA",
-                    categoria=string.Empty,
-                    saldo="TOTAL: Q.2,150.00",
-					aviso=string.Empty,
-                    vencimiento = "Ven: 13 - 07 - 1991",
-					background = "iFacturaBackground",
-                    iconEstado = "iNoSeleccionado",
-                    backgroundColor = Color.FromHex("BFBFBF")
-                }
+
             };
+			if(!Servicio.alias.Equals("CASA PROPIA"))
+			{
+				facturas.Add(new facturas
+				{
+					alias = "FACTURA ABRIL 2018",
+					proveedor = "EEGSA",
+					categoria = string.Empty,
+					saldo = "TOTAL: Q.2,150.00",
+					aviso = string.Empty,
+					vencimiento = "Ven: 13 - 07 - 1991",
+					background = "iFacturaBackground",
+					iconEstado = "iNoSeleccionado",
+					backgroundColor = Color.FromHex("BFBFBF")
+				});
+				facturas.Add(new facturas
+                {
+                    alias = "FACTURA MAYO 2018",
+                    proveedor = "EEGSA",
+                    categoria = string.Empty,
+                    saldo = "TOTAL: Q.2,150.00",
+                    aviso = string.Empty,
+                    vencimiento = "Ven: 13 - 07 - 1991",
+                    background = "iFacturaBackground",
+                    iconEstado = "iNoSeleccionado",
+                    backgroundColor = Color.FromHex("BFBFBF")
+				});
+
+			}
 
             Facturas = new ExtendedListView
             {

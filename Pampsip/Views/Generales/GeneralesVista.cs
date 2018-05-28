@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ImageCircle.Forms.Plugin.Abstractions;
+using Lottie.Forms;
 using Pampsip.Controls;
 using Pampsip.Data;
 using Pampsip.Models.SQLite;
@@ -11,6 +12,7 @@ namespace Pampsip.Views.Generales
 {
 	public class GeneralesVista : ContentPage
     {
+		List<servicios> servicios;
 		ExtendedListView ServiciosAsociados;
 		public GeneralesVista()
 		{			
@@ -33,7 +35,27 @@ namespace Pampsip.Views.Generales
                 BorderColor = Color.FromHex("f6f6f6"),
 				BorderThickness = Convert.ToInt32(App.DisplayScreenWidth / 107.428571428571429),
                 Aspect = Aspect.AspectFill,
-				Source = new Uri("https://scontent.fgua3-1.fna.fbcdn.net/v/t1.0-9/32745187_10214804139710736_5139786907856666624_n.jpg?_nc_cat=0&oh=73107fbcb26e24200f7d22699ebdbf4e&oe=5B78FC17")
+				Source = "avatar"
+            };
+
+			AnimationView avatarDefault = new AnimationView
+            {
+                AutoPlay = true,
+				Animation = "outline_user.json",
+                Loop = true,
+				WidthRequest = App.DisplayScreenHeight / 10.15,
+				HeightRequest = App.DisplayScreenHeight / 10.15,
+                VerticalOptions = LayoutOptions.Center,
+                HorizontalOptions = LayoutOptions.Center,
+            };
+
+			Grid Avatar = new Grid
+            {
+                Children =
+                {
+                    avatar,
+                    avatarDefault
+                }
             };
 
 			CircleImage config = new CircleImage
@@ -80,7 +102,7 @@ namespace Pampsip.Views.Generales
                             Constraint.Constant(App.DisplayScreenWidth)
                            );
 
-			CC.Children.Add(avatar,
+			CC.Children.Add(Avatar,
 			                Constraint.Constant((App.DisplayScreenWidth / 9.4)),
 			                Constraint.Constant(App.DisplayScreenHeight / 5.205128205128205),
 			                Constraint.Constant(App.DisplayScreenHeight / 8.12),
@@ -94,7 +116,7 @@ namespace Pampsip.Views.Generales
 			                Constraint.Constant(App.DisplayScreenHeight / 12.492307692307692)
                            );
 
-			List <servicios > servicios = new List<servicios>
+			servicios = new List<servicios>
 			{
 				new servicios{
 					alias = "CONTADOR MARÍA", 
@@ -108,7 +130,7 @@ namespace Pampsip.Views.Generales
 					alias = "CONTADOR PEDRO",
                     proveedor="EEGSA",
                     categoria="Categoría: Hogar 1",
-                    saldo="SALDO: Q.100.00",
+					saldo="SALDO: Q.100.00",
 					aviso="3 Facturas pendiente de pago",
                     vencimiento = "Ven: 13 - 07 - 1991"
                 },
@@ -116,9 +138,9 @@ namespace Pampsip.Views.Generales
 					alias = "CASA PROPIA",
                     proveedor="EEGSA",
                     categoria="Categoría: Hogar 2",
-                    saldo="SALDO: Q.150.00",
-					aviso="3 Facturas pendiente de pago",
-                    vencimiento = "Ven: 13 - 07 - 1991"
+					saldo="SALDO: Q.852.00",
+					aviso="1 Facturas pendiente de pago",
+                    vencimiento = "Ven: 01 - 03 - 2018"
                 }
 			};
 
@@ -160,6 +182,12 @@ namespace Pampsip.Views.Generales
 
 			Padding = 0;
 			Content = Contenido;
+		}
+		protected override void OnAppearing()
+		{
+			base.OnAppearing();
+			Constantes.isEnableSelected = 1;
+			Constantes.isEnableUnSelected = 0;
 		}
 
 		async void ServiciosAsociados_ItemSelected(object sender, SelectedItemChangedEventArgs e)

@@ -9,6 +9,8 @@ using Android.Widget;
 using Android.OS;
 using Xamarin.Forms;
 using Plugin.Toasts;
+using Card.IO;
+using Pampsip.Droid.Services;
 
 namespace Pampsip.Droid
 {
@@ -31,6 +33,21 @@ namespace Pampsip.Droid
 			DependencyService.Register<ToastNotificatorImplementation>();
             ToastNotificatorImplementation.Init(this);          
             LoadApplication(new App());
+        }
+
+		protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+
+            if (data != null)
+            {
+                // Be sure to JavaCast to a CreditCard (normal cast won‘t work)      
+                InfoShareHelper.Instance.CardInfo = data.GetParcelableExtra(CardIOActivity.ExtraScanResult).JavaCast<CreditCard>();
+            }
+            else
+            {
+				Console.WriteLine("Scanning Canceled!");
+            }
         }
     }
 }

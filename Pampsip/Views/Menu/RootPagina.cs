@@ -27,6 +27,23 @@ namespace Pampsip.Pages.Menu
 			}
 			*/
 
+			MessagingCenter.Subscribe<Pagar>(this, "Generales", async (sender) =>
+            {
+				try
+				{
+					await Navigation.PopAllPopupAsync();
+					await Navigation.PopAsync(false);
+					await Navigation.PopAsync(false);
+					await Navigation.PopAsync(false);
+					await Navigation.PopAsync(false);
+				}
+				catch (Exception ex)
+				{
+					System.Diagnostics.Debug.WriteLine(ex.Message);
+				}
+                
+            });
+
 			MessagingCenter.Subscribe<RootPagina>(this, "Generales", async (sender) =>
 			{
 				await Navigation.PopAllPopupAsync();

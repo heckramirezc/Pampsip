@@ -163,6 +163,9 @@
     <Reference Include="Toasts.Forms.Plugin.iOS">
       <HintPath>..\packages\Toasts.Forms.Plugin.2.0.4\lib\Xamarin.iOS10\Toasts.Forms.Plugin.iOS.dll</HintPath>
     </Reference>
+    <Reference Include="Card.IO">
+      <HintPath>..\packages\Xamarin.CardIO.iOS.5.4.1\lib\Xamarin.iOS10\Card.IO.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Pampsip\Pampsip.csproj">
@@ -173,6 +176,14 @@
   <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-40.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-60.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-58.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-87.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-80.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-120.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-120 copy.png" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-180.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -209,6 +220,7 @@
     <Compile Include="Renderers\IconViewRenderer.cs" />
     <Compile Include="Resources\ServiciosAsociadosDTModeloVista.cs" />
     <Compile Include="Renderers\ExtendedPdfViewRenderer.cs" />
+    <Compile Include="Services\CardService.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\loader.json" />
@@ -292,6 +304,14 @@
     <BundleResource Include="Resources\iButton.png" />
     <BundleResource Include="Resources\iButton%402x.png" />
     <BundleResource Include="Resources\iButton%403x.png" />
+    <BundleResource Include="Resources\iDropdown.png" />
+    <BundleResource Include="Resources\iDropdown%402x.png" />
+    <BundleResource Include="Resources\iDropdown%403x.png" />
+    <BundleResource Include="Resources\outline_user.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ITunesArtwork Include="iTunesArtwork%402x" />
+    <ITunesArtwork Include="iTunesArtwork" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.3.0.0.482510\build\netstandard2.0\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.3.0.0.482510\build\netstandard2.0\Xamarin.Forms.targets')" />

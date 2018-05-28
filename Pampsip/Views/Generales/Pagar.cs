@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Pampsip.Controls;
+using Pampsip.Views.Notificaciones;
 using Plugin.Toasts;
+using Rg.Plugins.Popup.Extensions;
 using Rg.Plugins.Popup.Pages;
 using Xamarin.Forms;
 
@@ -12,7 +14,7 @@ namespace Pampsip.Views.Generales
         ExtendedEntry Contrasenia;        
 		public Pagar()
         {
-			;
+			
             Label Mensaje = new Label
             {
                 HorizontalTextAlignment = TextAlignment.Center,
@@ -26,7 +28,7 @@ namespace Pampsip.Views.Generales
 			Contrasenia = new ExtendedEntry()
             {
                 Margin = 0,
-                Keyboard = Keyboard.Numeric,
+				Keyboard = Keyboard.Text,
                 Placeholder = "Contraseña de transferencias",
                 PlaceholderColor = Color.FromHex("4D4D4D"),
                 FontFamily = Device.OnPlatform("Montserrat-Light", "Montserrat-Light", null),
@@ -75,11 +77,11 @@ namespace Pampsip.Views.Generales
 
 			StackLayout Contenido = new StackLayout
             {
-                WidthRequest = App.DisplayScreenHeight / 2.498461538461538,
-                MinimumWidthRequest = App.DisplayScreenHeight / 2.498461538461538,
-                HorizontalOptions = LayoutOptions.CenterAndExpand,
+                //WidthRequest = App.DisplayScreenHeight / 2.498461538461538,
+                //MinimumWidthRequest = App.DisplayScreenHeight / 2.498461538461538,
+                //HorizontalOptions = LayoutOptions.CenterAndExpand,
                 VerticalOptions = LayoutOptions.CenterAndExpand,
-                BackgroundColor = Color.White,
+				BackgroundColor = Color.Transparent,
                 Spacing = App.DisplayScreenWidth / 12.533333333333333,
                 Padding = App.DisplayScreenWidth / 15.04,//new Thickness((App.DisplayScreenWidth / 15.04) , (App.DisplayScreenWidth / 18.8)),
                 Children =
@@ -121,7 +123,8 @@ namespace Pampsip.Views.Generales
 								HeightRequest = App.DisplayScreenWidth/1.175,
 								Source = "backgroundModal",
 								Aspect = Aspect.Fill
-							}
+							},
+							Contenido
 						}
 					}
 				}
@@ -141,10 +144,24 @@ namespace Pampsip.Views.Generales
                 await DisplayAlert("", "Por favor, indique su contraseña de transacciones", "Aceptar");
 				Contrasenia.Focus();
                 return;
+            }            
+            
+			await Navigation.PushPopupAsync(new NotificacionCargando());
+			await Task.Delay(3000);
+			ShowToast(ToastNotificationType.Success, "¡Genial!", "Pago realizado con éxito", 4);
+			MessagingCenter.Send<Pagar>(this, "Generales");
+			try
+            {
+                Navigation.PopAllPopupAsync();
+                Navigation.PopAsync(false);
+				Navigation.PopAsync(false);
+				Navigation.PopAsync(false);
+				Navigation.PopAsync(false);
             }
-            //ShowToast(ToastNotificationType.Error, "Inicio de sesión", "Token de inicio de sesión incorrecto", 6);
-            //MessagingCenter.Send<LoginVerificacion>(this, "Login");
-            ShowToast(ToastNotificationType.Success, "Bienvenido", "Inicio de sesión exitoso", 4);
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+            }
         }
 
 
@@ -155,6 +172,14 @@ namespace Pampsip.Views.Generales
 
 		void Contrasenia_TextChanged(object sender, TextChangedEventArgs e)
 		{
+			if (Contrasenia.Text.Length<3)
+            {
+				Contrasenia.TextColor = Color.FromHex("E9242A");
+            }
+            else
+            {
+				Contrasenia.TextColor = Color.FromHex("53A946");
+            }
 		}
   
 
